@@ -3177,119 +3177,33 @@
         }
 
         // =============================================
-        // MAGICAL BACKGROUND MUSIC
+        // MAGICAL BACKGROUND MUSIC (MP3)
+        // Music: "Magical Forest" by 0xabad1dea (CC-BY 4.0)
+        // https://github.com/0xabad1dea/glorytales
         // =============================================
 
+        let backgroundMusic = null;
+
         function createMagicalMusic() {
-            try {
-                musicContext = new (window.AudioContext || window.webkitAudioContext)();
-                musicGain = musicContext.createGain();
-                musicGain.gain.value = 0.15; // Low volume background
-                musicGain.connect(musicContext.destination);
+            if (backgroundMusic) return;
 
-                // Create a magical ambient soundscape
-                playMagicalAmbience();
-            } catch (e) {
-                console.log('Music not supported');
-            }
-        }
-
-        function playMagicalAmbience() {
-            if (!musicContext || !musicPlaying) return;
-
-            // Warm, magical chord progression - inspired by Hedwig's Theme
-            // Using lower octaves and gentler intervals for warmth
-            const chords = [
-                [130.81, 196.00, 261.63], // C major (low, warm)
-                [146.83, 220.00, 293.66], // D minor (melancholic)
-                [130.81, 164.81, 196.00], // C sus (dreamy)
-                [123.47, 185.00, 246.94], // B minor (mysterious)
-                [130.81, 174.61, 220.00], // C with F (hopeful)
-                [116.54, 174.61, 233.08], // Bb major (warm resolution)
-            ];
-
-            const now = musicContext.currentTime;
-            const chordDuration = 5; // Slower chord changes
-
-            chords.forEach((chord, chordIndex) => {
-                chord.forEach((freq, noteIndex) => {
-                    const osc = musicContext.createOscillator();
-                    const noteGain = musicContext.createGain();
-
-                    // Create a low-pass filter for warmth
-                    const filter = musicContext.createBiquadFilter();
-                    filter.type = 'lowpass';
-                    filter.frequency.value = 800; // Cut harsh highs
-                    filter.Q.value = 0.5;
-
-                    // Use only sine waves for maximum warmth
-                    osc.type = 'sine';
-                    osc.frequency.value = freq;
-
-                    noteGain.gain.value = 0;
-
-                    osc.connect(filter);
-                    filter.connect(noteGain);
-                    noteGain.connect(musicGain);
-
-                    const startTime = now + (chordIndex * chordDuration);
-                    const endTime = startTime + chordDuration + 1; // Slight overlap
-
-                    // Very gentle fade in and out
-                    noteGain.gain.setValueAtTime(0, startTime);
-                    noteGain.gain.linearRampToValueAtTime(0.06, startTime + 2);
-                    noteGain.gain.linearRampToValueAtTime(0.06, endTime - 2);
-                    noteGain.gain.linearRampToValueAtTime(0, endTime);
-
-                    osc.start(startTime);
-                    osc.stop(endTime);
-                });
-            });
-
-            // Add gentle, occasional bell-like tones (like a music box)
-            for (let i = 0; i < 4; i++) {
-                const bell = musicContext.createOscillator();
-                const bellGain = musicContext.createGain();
-                const bellFilter = musicContext.createBiquadFilter();
-
-                bellFilter.type = 'lowpass';
-                bellFilter.frequency.value = 1200;
-
-                bell.type = 'sine';
-                // Pentatonic notes for magical feel: C, D, E, G, A
-                const pentatonic = [523.25, 587.33, 659.25, 783.99, 880.00];
-                bell.frequency.value = pentatonic[Math.floor(Math.random() * pentatonic.length)];
-
-                bellGain.gain.value = 0;
-                bell.connect(bellFilter);
-                bellFilter.connect(bellGain);
-                bellGain.connect(musicGain);
-
-                const bellTime = now + 5 + Math.random() * 25;
-                bellGain.gain.setValueAtTime(0, bellTime);
-                bellGain.gain.linearRampToValueAtTime(0.03, bellTime + 0.3);
-                bellGain.gain.exponentialRampToValueAtTime(0.001, bellTime + 3);
-
-                bell.start(bellTime);
-                bell.stop(bellTime + 3);
-            }
-
-            // Loop the music
-            const totalDuration = chords.length * chordDuration * 1000;
-            if (musicPlaying) {
-                setTimeout(playMagicalAmbience, totalDuration - 2000); // Overlap for seamless loop
-            }
+            backgroundMusic = new Audio('assets/audio/background-music.mp3');
+            backgroundMusic.loop = true;
+            backgroundMusic.volume = 0.3; // Comfortable background level
         }
 
         function startMusic() {
             if (musicPlaying) return;
-            musicPlaying = true;
 
-            if (!musicContext) {
+            if (!backgroundMusic) {
                 createMagicalMusic();
-            } else {
-                musicContext.resume();
-                playMagicalAmbience();
+            }
+
+            if (backgroundMusic) {
+                backgroundMusic.play().catch(e => {
+                    console.log('Music autoplay blocked, will play on next interaction');
+                });
+                musicPlaying = true;
             }
 
             updateMusicButton();
@@ -3297,8 +3211,8 @@
 
         function stopMusic() {
             musicPlaying = false;
-            if (musicContext) {
-                musicContext.suspend();
+            if (backgroundMusic) {
+                backgroundMusic.pause();
             }
             updateMusicButton();
         }
