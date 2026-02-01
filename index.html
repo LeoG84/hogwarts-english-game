@@ -930,14 +930,48 @@
             font-size: 1.5em;
         }
 
-        /* Responsive */
+        /* Responsive - Tablet */
         @media (max-width: 768px) {
             .game-title {
-                font-size: 2em;
+                font-size: 1.8em;
+            }
+
+            .game-subtitle {
+                font-size: 1em;
             }
 
             .house-selection {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .house-card {
+                padding: 15px;
+            }
+
+            .house-icon {
+                font-size: 2em;
+            }
+
+            .locations {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .location-card {
+                padding: 15px;
+            }
+
+            .location-icon {
+                font-size: 2em;
+            }
+
+            .location-name {
+                font-size: 1em;
+            }
+
+            .location-desc {
+                font-size: 0.8em;
             }
 
             .letter-btn {
@@ -947,15 +981,262 @@
             }
 
             .challenge-area {
-                padding: 20px;
+                padding: 15px;
+            }
+
+            .challenge-title {
+                font-size: 1.5em;
             }
 
             .stats-bar {
-                font-size: 0.85em;
+                font-size: 0.8em;
+                padding: 8px 10px;
+                flex-wrap: wrap;
+                gap: 5px;
             }
 
             .stat {
-                gap: 4px;
+                gap: 3px;
+            }
+
+            .btn {
+                padding: 12px 24px;
+                font-size: 1em;
+            }
+
+            .screen {
+                padding: 80px 15px 20px 15px;
+            }
+
+            .reading-passage {
+                font-size: 1em;
+                padding: 15px;
+                line-height: 1.6;
+            }
+
+            .word-options {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .word-btn {
+                width: 100%;
+            }
+        }
+
+        /* Responsive - Mobile */
+        @media (max-width: 480px) {
+            .game-title {
+                font-size: 1.4em;
+            }
+
+            .game-subtitle {
+                font-size: 0.9em;
+            }
+
+            .hogwarts-crest {
+                font-size: 3em;
+            }
+
+            .house-selection {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .house-card {
+                padding: 12px;
+                flex-direction: row;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .house-icon {
+                font-size: 1.8em;
+            }
+
+            .house-name {
+                font-size: 1.1em;
+            }
+
+            .locations {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .location-card {
+                padding: 12px;
+                flex-direction: row;
+                align-items: center;
+                gap: 12px;
+                text-align: left;
+            }
+
+            .location-icon {
+                font-size: 1.8em;
+                margin-bottom: 0;
+            }
+
+            .location-name {
+                font-size: 0.95em;
+                margin-bottom: 2px;
+            }
+
+            .location-desc {
+                font-size: 0.75em;
+            }
+
+            .letter-btn {
+                width: 42px;
+                height: 42px;
+                font-size: 1.2em;
+            }
+
+            .floating-letters {
+                gap: 8px;
+            }
+
+            .challenge-header {
+                margin-bottom: 15px;
+            }
+
+            .challenge-title {
+                font-size: 1.3em;
+            }
+
+            .challenge-instruction {
+                font-size: 0.95em;
+            }
+
+            .stats-bar {
+                font-size: 0.7em;
+                padding: 6px 8px;
+            }
+
+            #musicToggle {
+                padding: 4px 8px !important;
+                font-size: 0.75em !important;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.95em;
+            }
+
+            .btn-listen, .listen-btn {
+                padding: 6px 12px;
+                font-size: 0.85em;
+            }
+
+            .screen {
+                padding: 70px 10px 15px 10px;
+            }
+
+            .back-btn {
+                top: 55px;
+                left: 10px;
+                padding: 6px 12px;
+                font-size: 0.85em;
+            }
+
+            .target-letter {
+                font-size: 3em;
+            }
+
+            .reading-passage {
+                font-size: 0.9em;
+                padding: 12px;
+                line-height: 1.5;
+            }
+
+            .question-text {
+                font-size: 1em;
+            }
+
+            .avatar-display {
+                margin: 10px 0;
+            }
+
+            .avatar-icon {
+                font-size: 40px;
+            }
+
+            .progress-container {
+                margin: 10px 0;
+            }
+
+            .shop-item {
+                padding: 12px;
+            }
+
+            .shop-icon {
+                font-size: 2em;
+            }
+
+            .trophy-card {
+                padding: 12px;
+            }
+
+            .trophy-icon {
+                font-size: 2em;
+            }
+
+            .score-popup {
+                padding: 20px;
+                margin: 10px;
+                width: calc(100% - 20px);
+            }
+
+            .score-title {
+                font-size: 1.3em;
+            }
+
+            .stars-display {
+                font-size: 2em;
+            }
+
+            .input-field {
+                width: 100%;
+                max-width: 280px;
+                padding: 12px 15px;
+                font-size: 1em;
+            }
+
+            .speech-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 2em;
+            }
+
+            .sentence-area {
+                min-height: 50px;
+                padding: 10px;
+                font-size: 0.9em;
+            }
+
+            .drag-letter {
+                padding: 8px 12px;
+                font-size: 0.9em;
+            }
+
+            .draggable-letters {
+                gap: 8px;
+            }
+        }
+
+        /* Fix for very small screens */
+        @media (max-width: 360px) {
+            .game-title {
+                font-size: 1.2em;
+            }
+
+            .stats-bar {
+                font-size: 0.65em;
+            }
+
+            .letter-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1em;
             }
         }
     </style>
@@ -1873,10 +2154,7 @@
                 </div>
             `;
 
-            // Read instruction then say the letter
-            speak(`Find the letter ${targetLetter}. Click on it!`, () => {
-                setTimeout(() => speakLetter(targetLetter), 300);
-            });
+            // No automatic speaking - user can click the audio button
         }
 
         function checkLetter(btn, clicked, target) {
@@ -2026,7 +2304,6 @@
 
             document.getElementById('challengeInstruction').textContent = 'Click the letters in order: A, B, C...';
             renderFullAlphabet();
-            speak("Let's do the whole alphabet! Click the letters in order, starting with A, then B, then C, all the way to Z!");
         }
 
         function renderFullAlphabet() {
@@ -2122,8 +2399,6 @@
                 <div class="speech-display" id="speechDisplay">Press the microphone and speak!</div>
                 <p class="hint-text">Tip: Speak slowly and clearly</p>
             `;
-            // Say the word, then give instruction
-            speak(`Say the word: ${item.word}. Click the speaker button to hear it again. Then click the microphone and say it!`);
 
             if (!speechRecognition) {
                 document.getElementById('challengeArea').innerHTML += `
@@ -2365,7 +2640,6 @@
                     <button class="word-btn" onclick="checkMatch(false)" style="background: #C62828;">✗ No, wrong word!</button>
                 </div>
             `;
-            speak(`Look at the picture and the word ${displayWord}. Do they match? Click Yes or No!`);
         }
 
         function checkMatch(userSaysMatch) {
@@ -2397,7 +2671,6 @@
 
             document.getElementById('challengeInstruction').textContent = 'Build the sentence:';
             renderSentence();
-            speak("Build a sentence! Click the words in the right order, then click Check Sentence.");
         }
 
         function renderSentence() {
@@ -2463,8 +2736,7 @@
             currentChallenge.category = 'animals';
 
             document.getElementById('challengeInstruction').textContent = 'Complete all challenges to win!';
-            speak("This is the boss challenge! Complete all the challenges to win. Good luck, wizard!");
-            setTimeout(generateBossQuestion, 2500);
+            setTimeout(generateBossQuestion, 500);
         }
 
         function generateBossQuestion() {
@@ -2565,14 +2837,8 @@
 
             document.getElementById('scorePopup').classList.add('active');
 
-            // Read the results aloud
-            if (stars === 3) {
-                speak(`Amazing job! You got ${currentChallenge.correctAnswers} out of ${currentChallenge.total} correct and earned 3 stars! You earned ${points} points and ${galleons} galleons!`);
-            } else if (stars === 2) {
-                speak(`Well done! You got ${currentChallenge.correctAnswers} out of ${currentChallenge.total} correct and earned 2 stars! You earned ${points} points and ${galleons} galleons!`);
-            } else {
-                speak(`Good try! You got ${currentChallenge.correctAnswers} out of ${currentChallenge.total} correct. Keep practicing to earn more stars!`);
-            }
+            // Play success sound instead of automatic speech
+            playSound('correct');
 
             updateStats();
             saveGame();
