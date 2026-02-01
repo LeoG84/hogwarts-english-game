@@ -1,0 +1,3018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hogwarts English Quest - Yotam's Adventure</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gryffindor-red: #740001;
+            --gryffindor-gold: #D3A625;
+            --slytherin-green: #1A472A;
+            --slytherin-silver: #5D5D5D;
+            --ravenclaw-blue: #0E1A40;
+            --ravenclaw-bronze: #946B2D;
+            --hufflepuff-yellow: #FFD800;
+            --hufflepuff-black: #000000;
+            --parchment: #F5E6C8;
+            --dark-wood: #2C1810;
+            --magic-glow: #7DF9FF;
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: var(--parchment);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .title {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Magical floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--gryffindor-gold);
+            border-radius: 50%;
+            animation: float 15s infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Screen container */
+        .screen {
+            display: none;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Main Menu */
+        .main-menu {
+            text-align: center;
+            padding-top: 50px;
+        }
+
+        .game-title {
+            font-size: 3em;
+            color: var(--gryffindor-gold);
+            text-shadow: 0 0 20px rgba(211, 166, 37, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .game-subtitle {
+            font-size: 1.5em;
+            color: var(--parchment);
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .hogwarts-crest {
+            font-size: 100px;
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Buttons */
+        .btn {
+            font-family: 'Cinzel', serif;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border: 2px solid var(--gryffindor-gold);
+            background: linear-gradient(135deg, var(--gryffindor-red) 0%, #4a0001 100%);
+            color: var(--gryffindor-gold);
+            cursor: pointer;
+            border-radius: 8px;
+            margin: 10px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(211, 166, 37, 0.3);
+            background: linear-gradient(135deg, #8B0000 0%, var(--gryffindor-red) 100%);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--dark-wood) 0%, #1a0f0a 100%);
+        }
+
+        .btn-small {
+            padding: 10px 20px;
+            font-size: 1em;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Player Stats Bar */
+        .stats-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(44, 24, 16, 0.95) 0%, rgba(44, 24, 16, 0.8) 100%);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            border-bottom: 2px solid var(--gryffindor-gold);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1em;
+        }
+
+        .stat-icon {
+            font-size: 1.5em;
+        }
+
+        .player-name {
+            color: var(--gryffindor-gold);
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Character Creation */
+        .character-creation {
+            padding-top: 80px;
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .house-selection {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .house-card {
+            padding: 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .house-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .house-card.selected {
+            border-color: white;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .house-card.gryffindor {
+            background: linear-gradient(135deg, var(--gryffindor-red), #4a0001);
+        }
+
+        .house-card.slytherin {
+            background: linear-gradient(135deg, var(--slytherin-green), #0d2818);
+        }
+
+        .house-card.ravenclaw {
+            background: linear-gradient(135deg, var(--ravenclaw-blue), #060d20);
+        }
+
+        .house-card.hufflepuff {
+            background: linear-gradient(135deg, #8B7500, #5c4d00);
+        }
+
+        .house-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        .house-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3em;
+        }
+
+        .input-field {
+            font-family: 'Lora', serif;
+            padding: 15px 25px;
+            font-size: 1.2em;
+            border: 2px solid var(--gryffindor-gold);
+            background: rgba(245, 230, 200, 0.1);
+            color: var(--parchment);
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .input-field::placeholder {
+            color: rgba(245, 230, 200, 0.5);
+        }
+
+        /* Hub Screen */
+        .hub-screen {
+            padding-top: 80px;
+        }
+
+        .locations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin-top: 30px;
+        }
+
+        .location-card {
+            background: linear-gradient(135deg, rgba(44, 24, 16, 0.9), rgba(26, 15, 10, 0.9));
+            border: 2px solid var(--gryffindor-gold);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .location-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(211, 166, 37, 0.2);
+        }
+
+        .location-card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .location-card.locked:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .location-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .location-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4em;
+            color: var(--gryffindor-gold);
+            margin-bottom: 10px;
+        }
+
+        .location-desc {
+            opacity: 0.8;
+            font-size: 0.95em;
+        }
+
+        .location-progress {
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: var(--magic-glow);
+        }
+
+        /* Challenge Screen */
+        .challenge-screen {
+            padding-top: 80px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .challenge-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .challenge-title {
+            font-size: 2em;
+            color: var(--gryffindor-gold);
+            margin-bottom: 10px;
+        }
+
+        .challenge-instruction {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .challenge-area {
+            background: rgba(245, 230, 200, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Alphabet Challenges */
+        .floating-letters {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .letter-btn {
+            width: 70px;
+            height: 70px;
+            font-size: 2em;
+            font-family: 'Cinzel', serif;
+            border: 2px solid var(--gryffindor-gold);
+            background: linear-gradient(135deg, var(--dark-wood), #1a0f0a);
+            color: var(--gryffindor-gold);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: letterFloat 3s ease-in-out infinite;
+        }
+
+        .letter-btn:nth-child(odd) {
+            animation-delay: -1.5s;
+        }
+
+        @keyframes letterFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .letter-btn:hover {
+            background: var(--gryffindor-gold);
+            color: var(--dark-wood);
+            transform: scale(1.1);
+        }
+
+        .letter-btn.correct {
+            background: #2E7D32;
+            border-color: #4CAF50;
+            animation: correctPulse 0.5s ease;
+        }
+
+        .letter-btn.wrong {
+            background: #C62828;
+            border-color: #EF5350;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .target-letter {
+            font-size: 4em;
+            color: var(--magic-glow);
+            text-shadow: 0 0 30px var(--magic-glow);
+            margin: 20px 0;
+            font-family: 'Cinzel', serif;
+        }
+
+        .audio-btn {
+            font-size: 3em;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .audio-btn:hover {
+            transform: scale(1.2);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid var(--gryffindor-gold);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gryffindor-gold), #FFD700);
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        /* Score popup */
+        .score-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, var(--dark-wood), #1a0f0a);
+            border: 3px solid var(--gryffindor-gold);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            z-index: 200;
+            display: none;
+            animation: popIn 0.5s ease;
+            max-width: 90%;
+        }
+
+        .score-popup.active {
+            display: block;
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            80% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .popup-title {
+            font-size: 2em;
+            color: var(--gryffindor-gold);
+            margin-bottom: 20px;
+        }
+
+        .popup-score {
+            font-size: 3em;
+            color: #FFD700;
+            margin: 20px 0;
+        }
+
+        .popup-stars {
+            font-size: 2.5em;
+            margin: 20px 0;
+        }
+
+        .popup-reward {
+            background: rgba(211, 166, 37, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .popup-reward-icon {
+            font-size: 3em;
+        }
+
+        /* Alphabet order challenge */
+        .letter-slots {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .letter-slot {
+            width: 60px;
+            height: 60px;
+            border: 2px dashed var(--gryffindor-gold);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            font-family: 'Cinzel', serif;
+            color: var(--gryffindor-gold);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .letter-slot.filled {
+            border-style: solid;
+            background: rgba(211, 166, 37, 0.2);
+        }
+
+        .draggable-letters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .drag-letter {
+            width: 55px;
+            height: 55px;
+            font-size: 1.6em;
+            font-family: 'Cinzel', serif;
+            border: 2px solid var(--gryffindor-gold);
+            background: linear-gradient(135deg, var(--dark-wood), #1a0f0a);
+            color: var(--gryffindor-gold);
+            border-radius: 8px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .drag-letter:hover {
+            transform: scale(1.1);
+            background: var(--gryffindor-gold);
+            color: var(--dark-wood);
+        }
+
+        .drag-letter.selected {
+            background: var(--gryffindor-gold);
+            color: var(--dark-wood);
+            transform: scale(1.1);
+        }
+
+        .drag-letter.used {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Word Challenge */
+        .word-image {
+            font-size: 100px;
+            margin: 20px 0;
+        }
+
+        .word-options {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .word-btn {
+            padding: 15px 30px;
+            font-size: 1.3em;
+            font-family: 'Cinzel', serif;
+            border: 2px solid var(--gryffindor-gold);
+            background: linear-gradient(135deg, var(--dark-wood), #1a0f0a);
+            color: var(--gryffindor-gold);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .word-btn:hover {
+            background: var(--gryffindor-gold);
+            color: var(--dark-wood);
+        }
+
+        /* Sentence Building */
+        .sentence-area {
+            min-height: 80px;
+            border: 2px dashed var(--gryffindor-gold);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            min-width: 80%;
+        }
+
+        .sentence-word {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            background: var(--gryffindor-gold);
+            color: var(--dark-wood);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Trophy Room */
+        .trophy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+            max-width: 800px;
+        }
+
+        .trophy-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--gryffindor-gold);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .trophy-card.locked {
+            opacity: 0.4;
+            filter: grayscale(1);
+        }
+
+        .trophy-card.unlocked {
+            box-shadow: 0 0 20px rgba(211, 166, 37, 0.3);
+        }
+
+        .trophy-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        .trophy-name {
+            font-family: 'Cinzel', serif;
+            color: var(--gryffindor-gold);
+        }
+
+        /* Back button */
+        .back-btn {
+            position: fixed;
+            top: 70px;
+            left: 20px;
+            background: rgba(44, 24, 16, 0.9);
+            border: 2px solid var(--gryffindor-gold);
+            color: var(--gryffindor-gold);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            z-index: 99;
+        }
+
+        .back-btn:hover {
+            background: var(--gryffindor-gold);
+            color: var(--dark-wood);
+        }
+
+        /* Reading Challenge */
+        .reading-passage {
+            background: rgba(245, 230, 200, 0.9);
+            color: var(--dark-wood);
+            padding: 30px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            line-height: 1.8;
+            max-width: 600px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            color: var(--gryffindor-gold);
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        /* Shop styles */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 900px;
+            margin: 20px 0;
+        }
+
+        .shop-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--gryffindor-gold);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .shop-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(211, 166, 37, 0.2);
+        }
+
+        .shop-item.owned {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        .shop-item-icon {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+
+        .shop-item-name {
+            font-family: 'Cinzel', serif;
+            color: var(--gryffindor-gold);
+            margin-bottom: 5px;
+        }
+
+        .shop-item-price {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
+        .shop-category {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5em;
+            color: var(--gryffindor-gold);
+            margin: 30px 0 15px;
+            text-align: left;
+            width: 100%;
+            max-width: 900px;
+            border-bottom: 2px solid var(--gryffindor-gold);
+            padding-bottom: 10px;
+        }
+
+        /* Speaking challenge */
+        .speech-display {
+            font-size: 2em;
+            color: var(--magic-glow);
+            min-height: 60px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .speech-btn {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            font-size: 3em;
+            border: 3px solid var(--gryffindor-gold);
+            background: linear-gradient(135deg, var(--gryffindor-red), #4a0001);
+            color: var(--gryffindor-gold);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .speech-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .speech-btn.listening {
+            animation: pulse 1s infinite;
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            border-color: #4CAF50;
+        }
+
+        .spell-word {
+            font-size: 3em;
+            color: var(--gryffindor-gold);
+            text-shadow: 0 0 20px rgba(211, 166, 37, 0.5);
+            margin: 20px 0;
+            font-family: 'Cinzel', serif;
+        }
+
+        .hint-text {
+            font-size: 0.9em;
+            opacity: 0.7;
+            margin-top: 15px;
+        }
+
+        /* Level grid */
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            max-width: 900px;
+            margin: 20px 0;
+        }
+
+        .level-card {
+            background: linear-gradient(135deg, rgba(44, 24, 16, 0.9), rgba(26, 15, 10, 0.9));
+            border: 2px solid var(--gryffindor-gold);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .level-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(211, 166, 37, 0.2);
+        }
+
+        .level-card.locked {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .level-card.locked:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .level-card.completed {
+            border-color: #4CAF50;
+        }
+
+        .level-number {
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        .level-icon {
+            font-size: 40px;
+            margin: 10px 0;
+        }
+
+        .level-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1em;
+            color: var(--gryffindor-gold);
+        }
+
+        .level-stars {
+            margin-top: 10px;
+            font-size: 1.2em;
+        }
+
+        /* Avatar display */
+        .avatar-display {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .avatar-icon {
+            font-size: 60px;
+        }
+
+        .avatar-items {
+            display: flex;
+            gap: 5px;
+            font-size: 1.5em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 2em;
+            }
+
+            .house-selection {
+                grid-template-columns: 1fr;
+            }
+
+            .letter-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5em;
+            }
+
+            .challenge-area {
+                padding: 20px;
+            }
+
+            .stats-bar {
+                font-size: 0.85em;
+            }
+
+            .stat {
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Magical Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Stats Bar (hidden initially) -->
+    <div class="stats-bar" id="statsBar" style="display: none;">
+        <div class="stat">
+            <span class="stat-icon" id="houseIcon">🦁</span>
+            <span class="player-name" id="playerNameDisplay">Wizard</span>
+        </div>
+        <div class="stat">
+            <span class="stat-icon">⭐</span>
+            <span id="housePoints">0</span> Points
+        </div>
+        <div class="stat">
+            <span class="stat-icon">🪙</span>
+            <span id="galleons">0</span> Galleons
+        </div>
+        <div class="stat">
+            <span class="stat-icon">🏆</span>
+            <span id="trophyCount">0</span>
+        </div>
+        <button id="musicToggle" onclick="toggleMusic()" style="background: rgba(211,166,37,0.2); border: 1px solid var(--gryffindor-gold); color: var(--gryffindor-gold); padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.9em;">🔊 Music On</button>
+    </div>
+
+    <!-- Main Menu Screen -->
+    <div class="screen main-menu active" id="mainMenu">
+        <h1 class="game-title">Hogwarts English Quest</h1>
+        <p class="game-subtitle">The Magical Maze Adventure</p>
+        <div class="hogwarts-crest">🏰</div>
+        <p style="margin-bottom: 30px; opacity: 0.8;">Welcome, young wizard! Your journey awaits...</p>
+        <button class="btn" onclick="showScreen('characterCreation')">Begin Adventure</button>
+        <button class="btn btn-secondary" onclick="loadGame()">Continue Quest</button>
+        <button class="btn-listen" onclick="playMainMenuInstructions()" style="margin-top: 20px; background: rgba(139, 69, 19, 0.3); border: 2px solid var(--gryffindor-gold); color: var(--gryffindor-gold); padding: 12px 24px; border-radius: 10px; cursor: pointer; font-size: 1.1em; display: flex; align-items: center; justify-content: center; gap: 10px; margin-left: auto; margin-right: auto;">
+            <span style="font-size: 1.5em;">🔊</span> Listen to Instructions
+        </button>
+    </div>
+
+    <!-- Character Creation Screen -->
+    <div class="screen character-creation" id="characterCreation">
+        <h2 class="game-title" style="font-size: 2em;">The Sorting Ceremony</h2>
+        <p style="margin: 20px 0;">Enter your wizard name:</p>
+        <input type="text" class="input-field" id="playerName" placeholder="Your name..." value="Yotam">
+
+        <p style="margin: 30px 0 10px;">The Sorting Hat will place you in your house:</p>
+        <div class="house-selection">
+            <div class="house-card gryffindor" onclick="selectHouse('gryffindor', this)">
+                <div class="house-icon">🦁</div>
+                <div class="house-name">Gryffindor</div>
+                <p style="font-size: 0.9em; margin-top: 10px;">Brave and bold</p>
+            </div>
+            <div class="house-card slytherin" onclick="selectHouse('slytherin', this)">
+                <div class="house-icon">🐍</div>
+                <div class="house-name">Slytherin</div>
+                <p style="font-size: 0.9em; margin-top: 10px;">Cunning and ambitious</p>
+            </div>
+            <div class="house-card ravenclaw" onclick="selectHouse('ravenclaw', this)">
+                <div class="house-icon">🦅</div>
+                <div class="house-name">Ravenclaw</div>
+                <p style="font-size: 0.9em; margin-top: 10px;">Wise and creative</p>
+            </div>
+            <div class="house-card hufflepuff" onclick="selectHouse('hufflepuff', this)">
+                <div class="house-icon">🦡</div>
+                <div class="house-name">Hufflepuff</div>
+                <p style="font-size: 0.9em; margin-top: 10px;">Loyal and kind</p>
+            </div>
+        </div>
+
+        <button class="btn" onclick="startGame()">Enter Hogwarts</button>
+    </div>
+
+    <!-- Hub Screen -->
+    <div class="screen hub-screen" id="hubScreen">
+        <h2 class="game-title" style="font-size: 2em;">Hogwarts Castle</h2>
+
+        <div class="avatar-display" id="avatarDisplay">
+            <div class="avatar-icon" id="avatarIcon">🧙</div>
+            <div class="avatar-items" id="avatarItems"></div>
+        </div>
+
+        <p>Choose your destination:</p>
+
+        <div class="locations">
+            <div class="location-card" onclick="enterLocation('owlery')">
+                <div class="location-icon">🦉</div>
+                <div class="location-name">The Owlery</div>
+                <div class="location-desc">Practice your letters and alphabet</div>
+            </div>
+
+            <div class="location-card" onclick="enterLocation('spellPractice')">
+                <div class="location-icon">🎤</div>
+                <div class="location-name">Spell Practice</div>
+                <div class="location-desc">Speak words and cast spells!</div>
+            </div>
+
+            <div class="location-card" onclick="enterLocation('maze1')">
+                <div class="location-icon">🗝️</div>
+                <div class="location-name">Philosopher's Chambers</div>
+                <div class="location-desc">Wing 1: Protect the Stone</div>
+                <div class="location-progress" id="wing1Progress">0/10 complete</div>
+            </div>
+
+            <div class="location-card" id="wing2Card" onclick="enterLocation('maze2')">
+                <div class="location-icon">🐍</div>
+                <div class="location-name">Serpent's Path</div>
+                <div class="location-desc">Wing 2: Chamber of Secrets</div>
+                <div class="location-progress" id="wing2Progress">0/10 complete</div>
+            </div>
+
+            <div class="location-card" onclick="enterLocation('diagonAlley')">
+                <div class="location-icon">🏪</div>
+                <div class="location-name">Diagon Alley</div>
+                <div class="location-desc">Spend your Galleons!</div>
+            </div>
+
+            <div class="location-card" onclick="enterLocation('trophyRoom')">
+                <div class="location-icon">🏆</div>
+                <div class="location-name">Trophy Room</div>
+                <div class="location-desc">View your achievements</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Owlery (Alphabet) Screen -->
+    <div class="screen challenge-screen" id="owleryScreen">
+        <button class="back-btn" onclick="showScreen('hubScreen')">← Back</button>
+        <div class="challenge-header">
+            <h2 class="challenge-title">🦉 The Owlery</h2>
+            <p class="challenge-instruction">Choose your alphabet challenge:</p>
+        </div>
+
+        <div class="challenge-area" id="owleryArea">
+            <div class="locations" style="margin-top: 0;">
+                <div class="location-card" onclick="startAlphabetChallenge('findLetter')">
+                    <div class="location-icon">🔍</div>
+                    <div class="location-name">Find the Letter</div>
+                    <div class="location-desc">Spot the letter the owl is looking for</div>
+                </div>
+                <div class="location-card" onclick="startAlphabetChallenge('alphabetOrder')">
+                    <div class="location-icon">📝</div>
+                    <div class="location-name">Owl Post Sorting</div>
+                    <div class="location-desc">Put the letters in ABC order</div>
+                </div>
+                <div class="location-card" onclick="startAlphabetChallenge('upperLower')">
+                    <div class="location-icon">🔤</div>
+                    <div class="location-name">Upper & Lower</div>
+                    <div class="location-desc">Match big letters to small letters</div>
+                </div>
+                <div class="location-card" onclick="startAlphabetChallenge('missingLetter')">
+                    <div class="location-icon">❓</div>
+                    <div class="location-name">Missing Letter</div>
+                    <div class="location-desc">Find the missing letter in the sequence</div>
+                </div>
+                <div class="location-card" onclick="startAlphabetChallenge('fullAlphabet')">
+                    <div class="location-icon">🌟</div>
+                    <div class="location-name">Full Alphabet</div>
+                    <div class="location-desc">Say the whole alphabet A to Z!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spell Practice Screen -->
+    <div class="screen challenge-screen" id="spellPracticeScreen">
+        <button class="back-btn" onclick="showScreen('hubScreen')">← Back</button>
+        <div class="challenge-header">
+            <h2 class="challenge-title">🎤 Spell Practice Room</h2>
+            <p class="challenge-instruction">Speak the words to cast spells!</p>
+        </div>
+
+        <div class="challenge-area" id="spellPracticeArea">
+            <div class="locations" style="margin-top: 0;">
+                <div class="location-card" onclick="startSpeakingChallenge('spells')">
+                    <div class="location-icon">✨</div>
+                    <div class="location-name">Magic Spells</div>
+                    <div class="location-desc">Say the spell names correctly</div>
+                </div>
+                <div class="location-card" onclick="startSpeakingChallenge('animals')">
+                    <div class="location-icon">🐾</div>
+                    <div class="location-name">Animal Names</div>
+                    <div class="location-desc">Name the magical creatures</div>
+                </div>
+                <div class="location-card" onclick="startSpeakingChallenge('colors')">
+                    <div class="location-icon">🌈</div>
+                    <div class="location-name">Colors</div>
+                    <div class="location-desc">Say the color words</div>
+                </div>
+                <div class="location-card" onclick="startSpeakingChallenge('numbers')">
+                    <div class="location-icon">🔢</div>
+                    <div class="location-name">Numbers</div>
+                    <div class="location-desc">Count from 1 to 20</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Maze Level Screen -->
+    <div class="screen challenge-screen" id="mazeLevelScreen">
+        <button class="back-btn" onclick="showScreen('hubScreen')">← Back</button>
+        <div class="challenge-header">
+            <h2 class="challenge-title" id="mazeLevelTitle">The Philosopher's Chambers</h2>
+            <p class="challenge-instruction" id="mazeLevelInstruction">Choose a challenge room:</p>
+        </div>
+
+        <div class="challenge-area" id="mazeLevelArea">
+            <!-- Levels will be populated here -->
+        </div>
+    </div>
+
+    <!-- Diagon Alley Shop Screen -->
+    <div class="screen challenge-screen" id="diagonAlleyScreen">
+        <button class="back-btn" onclick="showScreen('hubScreen')">← Back</button>
+        <div class="challenge-header">
+            <h2 class="challenge-title">🏪 Diagon Alley</h2>
+            <p class="challenge-instruction">Spend your Galleons on magical items!</p>
+            <p style="font-size: 1.3em; color: #FFD700; margin-top: 10px;">🪙 <span id="shopGalleons">0</span> Galleons</p>
+        </div>
+
+        <div id="shopArea">
+            <!-- Shop items will be populated here -->
+        </div>
+    </div>
+
+    <!-- Active Challenge Screen -->
+    <div class="screen challenge-screen" id="challengeScreen">
+        <button class="back-btn" onclick="exitChallenge()">← Exit</button>
+        <div class="challenge-header">
+            <h2 class="challenge-title" id="challengeTitle">Challenge</h2>
+            <p class="challenge-instruction" id="challengeInstruction">Instructions here</p>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <div class="progress-text"><span id="progressCurrent">0</span> / <span id="progressTotal">10</span></div>
+        </div>
+
+        <div class="challenge-area" id="challengeArea">
+            <!-- Challenge content will be populated here -->
+        </div>
+    </div>
+
+    <!-- Trophy Room Screen -->
+    <div class="screen challenge-screen" id="trophyRoomScreen">
+        <button class="back-btn" onclick="showScreen('hubScreen')">← Back</button>
+        <div class="challenge-header">
+            <h2 class="challenge-title">🏆 Trophy Room</h2>
+            <p class="challenge-instruction">Your magical achievements</p>
+        </div>
+
+        <div class="trophy-grid" id="trophyGrid">
+            <!-- Trophies will be populated here -->
+        </div>
+    </div>
+
+    <!-- Score Popup -->
+    <div class="score-popup" id="scorePopup">
+        <h2 class="popup-title" id="popupTitle">Challenge Complete!</h2>
+        <div class="popup-stars" id="popupStars">⭐⭐⭐</div>
+        <div class="popup-score">+<span id="popupPoints">0</span> points</div>
+        <div class="popup-reward" id="popupReward" style="display: none;">
+            <div class="popup-reward-icon" id="popupRewardIcon"></div>
+            <div id="popupRewardText"></div>
+        </div>
+        <p id="popupMessage">Well done, young wizard!</p>
+        <button class="btn" onclick="closePopup()">Continue</button>
+    </div>
+
+    <script>
+        // =============================================
+        // GAME STATE
+        // =============================================
+        let gameState = {
+            playerName: 'Yotam',
+            house: 'gryffindor',
+            housePoints: 0,
+            galleons: 50,
+            trophies: [],
+            completedLevels: [],
+            levelStars: {},
+            ownedItems: [],
+            equippedItems: {
+                wand: 'basic',
+                pet: 'owl',
+                robe: 'basic'
+            },
+            stats: {
+                lettersFound: 0,
+                wordsSpoken: 0,
+                sentencesBuilt: 0,
+                passagesRead: 0
+            }
+        };
+
+        // =============================================
+        // GAME DATA
+        // =============================================
+
+        // House icons
+        const houseIcons = {
+            gryffindor: '🦁',
+            slytherin: '🐍',
+            ravenclaw: '🦅',
+            hufflepuff: '🦡'
+        };
+
+        // All trophies
+        const allTrophies = [
+            { id: 'first_step', name: 'First Step', icon: '👣', desc: 'Complete your first challenge' },
+            { id: 'abc_wizard', name: 'ABC Wizard', icon: '🔤', desc: 'Complete Full Alphabet challenge' },
+            { id: 'letter_spotter', name: 'Letter Spotter', icon: '🔍', desc: 'Find 50 letters correctly' },
+            { id: 'fluffy_friend', name: "Fluffy's Friend", icon: '🐕', desc: 'Complete Level 1' },
+            { id: 'key_catcher', name: 'Key Catcher', icon: '🗝️', desc: 'Complete Level 3' },
+            { id: 'potion_master', name: 'Potion Master', icon: '⚗️', desc: 'Complete Level 7' },
+            { id: 'wing1_complete', name: 'Stone Guardian', icon: '💎', desc: 'Complete Wing 1' },
+            { id: 'wing2_complete', name: 'Chamber Explorer', icon: '🐍', desc: 'Complete Wing 2' },
+            { id: 'bookworm', name: 'Bookworm', icon: '📚', desc: 'Read 20 passages' },
+            { id: 'spell_caster', name: 'Spell Caster', icon: '✨', desc: 'Speak 50 words correctly' },
+            { id: 'sentence_builder', name: 'Quick Quill', icon: '✒️', desc: 'Build 25 sentences' },
+            { id: 'hundred_points', name: 'Century', icon: '💯', desc: 'Earn 100 house points' },
+            { id: 'five_hundred', name: 'Star Student', icon: '⭐', desc: 'Earn 500 house points' },
+            { id: 'shopper', name: 'Shopper', icon: '🛍️', desc: 'Buy 5 items from Diagon Alley' },
+            { id: 'collector', name: 'Collector', icon: '🎁', desc: 'Own 10 items' }
+        ];
+
+        // Wing 1 Levels - Philosopher's Stone
+        const wing1Levels = [
+            { id: 1, name: "Fluffy's Door", icon: '🐕', type: 'vocabulary', category: 'animals', desc: 'Learn animal words' },
+            { id: 2, name: "Devil's Snare", icon: '🌿', type: 'reading', desc: 'Read instructions carefully' },
+            { id: 3, name: "Flying Keys", icon: '🗝️', type: 'wordMatch', desc: 'Match words quickly' },
+            { id: 4, name: "Chess Room", icon: '♟️', type: 'sentence', desc: 'Build command sentences' },
+            { id: 5, name: "Troll Room", icon: '👹', type: 'speaking', category: 'warnings', desc: 'Shout warning words!' },
+            { id: 6, name: "Potion Puzzle", icon: '⚗️', type: 'reading', desc: 'Read the riddle' },
+            { id: 7, name: "Mirror Room", icon: '🪞', type: 'vocabulary', category: 'feelings', desc: 'Words for feelings' },
+            { id: 8, name: "Quirrell's Test", icon: '👳', type: 'sentence', desc: 'Answer questions' },
+            { id: 9, name: "Fire Challenge", icon: '🔥', type: 'reading', desc: 'Follow potion instructions' },
+            { id: 10, name: "The Stone", icon: '💎', type: 'boss', desc: 'Final challenge!' }
+        ];
+
+        // Wing 2 Levels - Chamber of Secrets
+        const wing2Levels = [
+            { id: 11, name: "Dobby's Warning", icon: '🧦', type: 'reading', desc: 'Read the warning message' },
+            { id: 12, name: "Flying Car", icon: '🚗', type: 'vocabulary', category: 'transport', desc: 'Travel words' },
+            { id: 13, name: "Whomping Willow", icon: '🌳', type: 'speaking', category: 'actions', desc: 'Action words!' },
+            { id: 14, name: "Moaning Myrtle", icon: '👻', type: 'sentence', desc: 'Ask questions' },
+            { id: 15, name: "Polyjuice Prep", icon: '🧪', type: 'reading', desc: 'Follow the recipe' },
+            { id: 16, name: "Aragog's Lair", icon: '🕷️', type: 'speaking', category: 'help', desc: 'Ask for help!' },
+            { id: 17, name: "Tom's Diary", icon: '📔', type: 'sentence', desc: 'Write short messages' },
+            { id: 18, name: "Snake Talk", icon: '🐍', type: 'vocabulary', category: 'body', desc: 'Body part words' },
+            { id: 19, name: "Chamber Door", icon: '🚪', type: 'speaking', category: 'passwords', desc: 'Say the password!' },
+            { id: 20, name: "Basilisk Battle", icon: '🐉', type: 'boss', desc: 'Defeat the basilisk!' }
+        ];
+
+        // Vocabulary data
+        const vocabularyData = {
+            animals: [
+                { word: 'cat', emoji: '🐱' },
+                { word: 'dog', emoji: '🐕' },
+                { word: 'owl', emoji: '🦉' },
+                { word: 'frog', emoji: '🐸' },
+                { word: 'rat', emoji: '🐀' },
+                { word: 'snake', emoji: '🐍' },
+                { word: 'spider', emoji: '🕷️' },
+                { word: 'dragon', emoji: '🐉' },
+                { word: 'horse', emoji: '🐴' },
+                { word: 'bird', emoji: '🐦' }
+            ],
+            feelings: [
+                { word: 'happy', emoji: '😊' },
+                { word: 'sad', emoji: '😢' },
+                { word: 'angry', emoji: '😠' },
+                { word: 'scared', emoji: '😨' },
+                { word: 'brave', emoji: '💪' },
+                { word: 'tired', emoji: '😴' },
+                { word: 'excited', emoji: '🤩' },
+                { word: 'worried', emoji: '😟' }
+            ],
+            transport: [
+                { word: 'car', emoji: '🚗' },
+                { word: 'train', emoji: '🚂' },
+                { word: 'broom', emoji: '🧹' },
+                { word: 'boat', emoji: '⛵' },
+                { word: 'bus', emoji: '🚌' },
+                { word: 'bike', emoji: '🚲' }
+            ],
+            body: [
+                { word: 'head', emoji: '🗣️' },
+                { word: 'hand', emoji: '✋' },
+                { word: 'foot', emoji: '🦶' },
+                { word: 'eye', emoji: '👁️' },
+                { word: 'ear', emoji: '👂' },
+                { word: 'nose', emoji: '👃' }
+            ],
+            colors: [
+                { word: 'red', emoji: '🔴' },
+                { word: 'blue', emoji: '🔵' },
+                { word: 'green', emoji: '🟢' },
+                { word: 'yellow', emoji: '🟡' },
+                { word: 'purple', emoji: '🟣' },
+                { word: 'orange', emoji: '🟠' },
+                { word: 'black', emoji: '⚫' },
+                { word: 'white', emoji: '⚪' }
+            ]
+        };
+
+        // Speaking challenge data
+        const speakingData = {
+            spells: [
+                { word: 'Lumos', hint: 'Light spell' },
+                { word: 'Nox', hint: 'Dark spell' },
+                { word: 'Alohomora', hint: 'Unlock spell' },
+                { word: 'Expelliarmus', hint: 'Disarm spell' },
+                { word: 'Accio', hint: 'Summoning spell' },
+                { word: 'Wingardium Leviosa', hint: 'Levitation spell' },
+                { word: 'Stupefy', hint: 'Stunning spell' },
+                { word: 'Reparo', hint: 'Fixing spell' }
+            ],
+            animals: vocabularyData.animals.map(a => ({ word: a.word, hint: a.emoji })),
+            colors: vocabularyData.colors.map(c => ({ word: c.word, hint: c.emoji })),
+            numbers: [
+                { word: 'one', hint: '1' },
+                { word: 'two', hint: '2' },
+                { word: 'three', hint: '3' },
+                { word: 'four', hint: '4' },
+                { word: 'five', hint: '5' },
+                { word: 'six', hint: '6' },
+                { word: 'seven', hint: '7' },
+                { word: 'eight', hint: '8' },
+                { word: 'nine', hint: '9' },
+                { word: 'ten', hint: '10' },
+                { word: 'eleven', hint: '11' },
+                { word: 'twelve', hint: '12' }
+            ],
+            warnings: [
+                { word: 'Stop', hint: '🛑' },
+                { word: 'Help', hint: '🆘' },
+                { word: 'Run', hint: '🏃' },
+                { word: 'Watch out', hint: '⚠️' },
+                { word: 'Danger', hint: '☠️' },
+                { word: 'Go away', hint: '👋' }
+            ],
+            actions: [
+                { word: 'Jump', hint: '🦘' },
+                { word: 'Run', hint: '🏃' },
+                { word: 'Walk', hint: '🚶' },
+                { word: 'Fly', hint: '🦅' },
+                { word: 'Swim', hint: '🏊' },
+                { word: 'Climb', hint: '🧗' }
+            ],
+            help: [
+                { word: 'Help me please', hint: 'Ask for help' },
+                { word: 'I need help', hint: 'Ask for help' },
+                { word: 'Can you help', hint: 'Ask for help' },
+                { word: 'Please help', hint: 'Ask for help' }
+            ],
+            passwords: [
+                { word: 'Open sesame', hint: 'Magic words' },
+                { word: 'Let me in', hint: 'Request entry' },
+                { word: 'Friend', hint: 'Mines of Moria!' },
+                { word: 'Password', hint: 'Say it clearly' }
+            ]
+        };
+
+        // Reading challenges
+        const readingChallenges = [
+            {
+                passage: "The plant was called Devil's Snare. It wrapped around Harry's legs. Hermione remembered that Devil's Snare hates light and warmth. She made a bright fire with her wand.",
+                question: "What does Devil's Snare hate?",
+                options: ["Dark and cold", "Light and warmth", "Water and wind", "Noise and music"],
+                correct: 1
+            },
+            {
+                passage: "To get past Fluffy, you need music. When Fluffy hears music, he falls asleep. Hagrid told this secret to a stranger in a pub.",
+                question: "How do you make Fluffy fall asleep?",
+                options: ["Give him food", "Play music", "Turn off the lights", "Say a spell"],
+                correct: 1
+            },
+            {
+                passage: "The Mirror of Erised shows your deepest wish. Harry saw his family in the mirror. Ron saw himself as Head Boy with the Quidditch cup.",
+                question: "What did Harry see in the mirror?",
+                options: ["The Quidditch cup", "His family", "A pile of gold", "Hogwarts castle"],
+                correct: 1
+            },
+            {
+                passage: "Dobby the house-elf came to warn Harry. He said Harry must not go back to Hogwarts. Dobby said there was danger at the school this year.",
+                question: "What did Dobby warn Harry about?",
+                options: ["Don't go to Hogwarts", "Don't use magic", "Don't fly the car", "Don't talk to snakes"],
+                correct: 0
+            },
+            {
+                passage: "To make Polyjuice Potion, you need many things. You need lacewing flies, leeches, and a bit of the person you want to become. The potion takes one month to make.",
+                question: "How long does Polyjuice Potion take to make?",
+                options: ["One day", "One week", "One month", "One year"],
+                correct: 2
+            },
+            {
+                passage: "The Chamber of Secrets was built by Salazar Slytherin. Only his true heir could open it. Inside lived a terrible monster that could kill with its eyes.",
+                question: "Who built the Chamber of Secrets?",
+                options: ["Godric Gryffindor", "Salazar Slytherin", "Rowena Ravenclaw", "Helga Hufflepuff"],
+                correct: 1
+            }
+        ];
+
+        // Sentence building data
+        const sentenceData = [
+            { words: ["The", "cat", "is", "black"], correct: "The cat is black" },
+            { words: ["Harry", "caught", "the", "snitch"], correct: "Harry caught the snitch" },
+            { words: ["Open", "the", "door", "now"], correct: "Open the door now" },
+            { words: ["Hermione", "reads", "many", "books"], correct: "Hermione reads many books" },
+            { words: ["The", "owl", "brings", "letters"], correct: "The owl brings letters" },
+            { words: ["Ron", "is", "very", "brave"], correct: "Ron is very brave" },
+            { words: ["Where", "is", "the", "key"], correct: "Where is the key" },
+            { words: ["I", "can", "fly", "high"], correct: "I can fly high" },
+            { words: ["Help", "me", "please", "now"], correct: "Help me please now" },
+            { words: ["The", "snake", "is", "green"], correct: "The snake is green" }
+        ];
+
+        // Shop items
+        const shopItems = {
+            wands: [
+                { id: 'wand_phoenix', name: 'Phoenix Wand', icon: '🪄', price: 100, desc: 'A beautiful phoenix feather wand' },
+                { id: 'wand_dragon', name: 'Dragon Wand', icon: '⚡', price: 150, desc: 'Powerful dragon heartstring wand' },
+                { id: 'wand_elder', name: 'Elder Wand', icon: '✨', price: 300, desc: 'The most powerful wand!' }
+            ],
+            pets: [
+                { id: 'pet_cat', name: 'Black Cat', icon: '🐱', price: 80, desc: 'A magical black cat' },
+                { id: 'pet_toad', name: 'Trevor Toad', icon: '🐸', price: 50, desc: 'A hopping toad friend' },
+                { id: 'pet_rat', name: 'Pet Rat', icon: '🐀', price: 40, desc: 'A clever little rat' },
+                { id: 'pet_phoenix', name: 'Baby Phoenix', icon: '🔥', price: 500, desc: 'A rare phoenix!' }
+            ],
+            robes: [
+                { id: 'robe_fancy', name: 'Fancy Robes', icon: '👘', price: 120, desc: 'Elegant dress robes' },
+                { id: 'robe_quidditch', name: 'Quidditch Robes', icon: '🧥', price: 100, desc: 'Ready to fly!' },
+                { id: 'robe_invisible', name: 'Invisibility Cloak', icon: '👻', price: 400, desc: 'Become invisible!' }
+            ],
+            extras: [
+                { id: 'broom_nimbus', name: 'Nimbus 2000', icon: '🧹', price: 200, desc: 'A fast racing broom' },
+                { id: 'map_marauder', name: "Marauder's Map", icon: '🗺️', price: 250, desc: 'See all of Hogwarts' },
+                { id: 'snitch_golden', name: 'Golden Snitch', icon: '🥇', price: 150, desc: 'Your own snitch!' },
+                { id: 'chess_set', name: 'Wizard Chess', icon: '♟️', price: 80, desc: 'Magical chess pieces' }
+            ]
+        };
+
+        // =============================================
+        // CURRENT CHALLENGE STATE
+        // =============================================
+        let currentChallenge = {
+            type: null,
+            questionIndex: 0,
+            score: 0,
+            total: 10,
+            correctAnswers: 0,
+            data: null,
+            levelId: null,
+            wing: null
+        };
+
+        let speechRecognition = null;
+        let isListening = false;
+
+        // =============================================
+        // INITIALIZATION
+        // =============================================
+
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        function initSpeechRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                speechRecognition = new SpeechRecognition();
+                speechRecognition.continuous = false;
+                speechRecognition.interimResults = true;
+                speechRecognition.lang = 'en-US';
+
+                speechRecognition.onresult = handleSpeechResult;
+                speechRecognition.onend = () => {
+                    isListening = false;
+                    updateSpeechButton();
+                };
+                speechRecognition.onerror = (e) => {
+                    console.log('Speech error:', e.error);
+                    isListening = false;
+                    updateSpeechButton();
+                };
+            }
+        }
+
+        // =============================================
+        // SCREEN NAVIGATION
+        // =============================================
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+
+            const statsBar = document.getElementById('statsBar');
+            if (screenId === 'mainMenu' || screenId === 'characterCreation') {
+                statsBar.style.display = 'none';
+            } else {
+                statsBar.style.display = 'flex';
+                updateStats();
+                updateProgressDisplay();
+            }
+
+            // Read screen instructions aloud
+            setTimeout(() => {
+                switch(screenId) {
+                    case 'characterCreation':
+                        speak("Welcome to the Sorting Ceremony! Type your wizard name, then choose your Hogwarts house by clicking on it. When you're ready, click Enter Hogwarts!");
+                        break;
+                    case 'hubScreen':
+                        speak(`Welcome to Hogwarts Castle, ${gameState.playerName}! Choose where you want to go. You can practice letters in the Owlery, practice speaking spells, explore the maze, go shopping, or see your trophies.`);
+                        break;
+                    case 'owleryScreen':
+                        speak("Welcome to the Owlery! Choose an alphabet challenge. You can find letters, put them in order, match big and small letters, or do the full alphabet!");
+                        break;
+                    case 'spellPracticeScreen':
+                        speak("Welcome to the Spell Practice Room! Here you can practice speaking words out loud. Choose a category and speak into the microphone!");
+                        break;
+                    case 'mazeLevelScreen':
+                        speak("Choose a challenge room to enter. Complete each room to unlock the next one!");
+                        break;
+                    case 'diagonAlleyScreen':
+                        speak(`Welcome to Diagon Alley! You have ${gameState.galleons} galleons to spend. Click on items to buy them!`);
+                        break;
+                    case 'trophyRoomScreen':
+                        speak(`This is your Trophy Room! You have earned ${gameState.trophies.length} trophies. Keep playing to unlock more!`);
+                        break;
+                }
+            }, 500);
+        }
+
+        // =============================================
+        // CHARACTER & GAME SETUP
+        // =============================================
+
+        let selectedHouse = 'gryffindor';
+
+        function selectHouse(house, element) {
+            document.querySelectorAll('.house-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedHouse = house;
+        }
+
+        function startGame() {
+            const name = document.getElementById('playerName').value || 'Wizard';
+            gameState.playerName = name;
+            gameState.house = selectedHouse;
+
+            document.getElementById('playerNameDisplay').textContent = name;
+            document.getElementById('houseIcon').textContent = houseIcons[selectedHouse];
+            updateStats();
+            updateAvatarDisplay();
+            saveGame();
+
+            // Announce the sorting
+            const houseNames = { gryffindor: 'Gryffindor', slytherin: 'Slytherin', ravenclaw: 'Ravenclaw', hufflepuff: 'Hufflepuff' };
+            speak(`The Sorting Hat has decided! ${name}, you are in ${houseNames[selectedHouse]}!`, () => {
+                showScreen('hubScreen');
+            });
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('hogwartsEnglishQuest');
+            if (saved) {
+                gameState = JSON.parse(saved);
+                document.getElementById('playerNameDisplay').textContent = gameState.playerName;
+                document.getElementById('houseIcon').textContent = houseIcons[gameState.house];
+                updateStats();
+                updateAvatarDisplay();
+                showScreen('hubScreen');
+            } else {
+                alert('No saved game found. Starting new adventure!');
+                showScreen('characterCreation');
+            }
+        }
+
+        function saveGame() {
+            localStorage.setItem('hogwartsEnglishQuest', JSON.stringify(gameState));
+        }
+
+        function updateStats() {
+            document.getElementById('housePoints').textContent = gameState.housePoints;
+            document.getElementById('galleons').textContent = gameState.galleons;
+            document.getElementById('trophyCount').textContent = gameState.trophies.length;
+        }
+
+        function updateProgressDisplay() {
+            const wing1Complete = gameState.completedLevels.filter(l => l >= 1 && l <= 10).length;
+            const wing2Complete = gameState.completedLevels.filter(l => l >= 11 && l <= 20).length;
+
+            const w1el = document.getElementById('wing1Progress');
+            const w2el = document.getElementById('wing2Progress');
+            if (w1el) w1el.textContent = `${wing1Complete}/10 complete`;
+            if (w2el) w2el.textContent = `${wing2Complete}/10 complete`;
+        }
+
+        function updateAvatarDisplay() {
+            const items = [];
+            if (gameState.ownedItems.includes('pet_cat')) items.push('🐱');
+            else if (gameState.ownedItems.includes('pet_phoenix')) items.push('🔥');
+            else if (gameState.ownedItems.includes('pet_toad')) items.push('🐸');
+            else items.push('🦉');
+
+            if (gameState.ownedItems.includes('broom_nimbus')) items.push('🧹');
+            if (gameState.ownedItems.includes('wand_elder')) items.push('✨');
+            else if (gameState.ownedItems.includes('wand_dragon')) items.push('⚡');
+
+            document.getElementById('avatarItems').innerHTML = items.join(' ');
+        }
+
+        // =============================================
+        // LOCATION HANDLERS
+        // =============================================
+
+        function enterLocation(location) {
+            switch(location) {
+                case 'owlery':
+                    showScreen('owleryScreen');
+                    break;
+                case 'spellPractice':
+                    showScreen('spellPracticeScreen');
+                    break;
+                case 'maze1':
+                    showMazeLevels(1);
+                    break;
+                case 'maze2':
+                    showMazeLevels(2);
+                    break;
+                case 'diagonAlley':
+                    showDiagonAlley();
+                    break;
+                case 'trophyRoom':
+                    showTrophyRoom();
+                    break;
+            }
+        }
+
+        // =============================================
+        // MAZE LEVELS
+        // =============================================
+
+        function showMazeLevels(wing) {
+            let levels, title;
+            if (wing === 1) {
+                levels = wing1Levels;
+                title = "🗝️ The Philosopher's Chambers";
+            } else {
+                levels = wing2Levels;
+                title = "🐍 The Serpent's Path";
+            }
+
+            document.getElementById('mazeLevelTitle').textContent = title;
+
+            const html = `<div class="level-grid">
+                ${levels.map((level, index) => {
+                    const isCompleted = gameState.completedLevels.includes(level.id);
+                    const stars = gameState.levelStars[level.id] || 0;
+                    const isLocked = index > 0 && !gameState.completedLevels.includes(levels[index-1].id);
+
+                    return `
+                        <div class="level-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''}"
+                             onclick="${isLocked ? '' : `startMazeLevel(${level.id}, '${level.type}', '${level.category || ''}', ${wing})`}">
+                            <div class="level-number">Level ${level.id}</div>
+                            <div class="level-icon">${level.icon}</div>
+                            <div class="level-name">${level.name}</div>
+                            <div class="level-stars">
+                                ${isCompleted ? '⭐'.repeat(stars) + '☆'.repeat(3-stars) : (isLocked ? '🔒' : '')}
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>`;
+
+            document.getElementById('mazeLevelArea').innerHTML = html;
+            showScreen('mazeLevelScreen');
+        }
+
+        function startMazeLevel(levelId, type, category, wing) {
+            currentChallenge = {
+                type: type,
+                levelId: levelId,
+                questionIndex: 0,
+                score: 0,
+                total: 5,
+                correctAnswers: 0,
+                category: category,
+                wing: wing
+            };
+
+            showScreen('challengeScreen');
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressCurrent').textContent = '0';
+            document.getElementById('progressTotal').textContent = '5';
+
+            const level = (wing === 1 ? wing1Levels : wing2Levels).find(l => l.id === levelId);
+            document.getElementById('challengeTitle').textContent = `${level.icon} ${level.name}`;
+
+            switch(type) {
+                case 'vocabulary':
+                    generateVocabularyChallenge();
+                    break;
+                case 'reading':
+                    generateReadingChallenge();
+                    break;
+                case 'wordMatch':
+                    generateWordMatchChallenge();
+                    break;
+                case 'sentence':
+                    generateSentenceChallenge();
+                    break;
+                case 'speaking':
+                    generateSpeakingChallenge();
+                    break;
+                case 'boss':
+                    generateBossChallenge();
+                    break;
+            }
+        }
+
+        // =============================================
+        // ALPHABET CHALLENGES
+        // =============================================
+
+        function startAlphabetChallenge(type) {
+            currentChallenge = {
+                type: type,
+                questionIndex: 0,
+                score: 0,
+                total: type === 'fullAlphabet' ? 26 : 10,
+                correctAnswers: 0
+            };
+
+            showScreen('challengeScreen');
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressCurrent').textContent = '0';
+            document.getElementById('progressTotal').textContent = currentChallenge.total.toString();
+
+            switch(type) {
+                case 'findLetter':
+                    document.getElementById('challengeTitle').textContent = '🔍 Find the Letter';
+                    generateFindLetter();
+                    break;
+                case 'alphabetOrder':
+                    document.getElementById('challengeTitle').textContent = '📝 Alphabet Order';
+                    generateAlphabetOrder();
+                    break;
+                case 'upperLower':
+                    document.getElementById('challengeTitle').textContent = '🔤 Upper & Lower';
+                    generateUpperLower();
+                    break;
+                case 'missingLetter':
+                    document.getElementById('challengeTitle').textContent = '❓ Missing Letter';
+                    generateMissingLetter();
+                    break;
+                case 'fullAlphabet':
+                    document.getElementById('challengeTitle').textContent = '🌟 Full Alphabet';
+                    generateFullAlphabet();
+                    break;
+            }
+        }
+
+        function generateFindLetter() {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const targetIndex = Math.floor(Math.random() * 26);
+            const targetLetter = alphabet[targetIndex];
+
+            let letters = [targetLetter];
+            while (letters.length < 8) {
+                const randomLetter = alphabet[Math.floor(Math.random() * 26)];
+                if (!letters.includes(randomLetter)) {
+                    letters.push(randomLetter);
+                }
+            }
+            letters.sort(() => Math.random() - 0.5);
+
+            document.getElementById('challengeInstruction').textContent = 'Click on the letter:';
+            document.getElementById('challengeArea').innerHTML = `
+                <div class="target-letter">${targetLetter}</div>
+                <button class="audio-btn" onclick="speakLetter('${targetLetter}')">🔊</button>
+                <div class="floating-letters">
+                    ${letters.map(l => `
+                        <button class="letter-btn" onclick="checkLetter(this, '${l}', '${targetLetter}')">${l}</button>
+                    `).join('')}
+                </div>
+            `;
+
+            // Read instruction then say the letter
+            speak(`Find the letter ${targetLetter}. Click on it!`, () => {
+                setTimeout(() => speakLetter(targetLetter), 300);
+            });
+        }
+
+        function checkLetter(btn, clicked, target) {
+            if (clicked === target) {
+                btn.classList.add('correct');
+                currentChallenge.correctAnswers++;
+                currentChallenge.score += 10;
+                gameState.stats.lettersFound++;
+                playSound('correct');
+                setTimeout(nextQuestion, 800);
+            } else {
+                btn.classList.add('wrong');
+                playSound('wrong');
+                setTimeout(() => btn.classList.remove('wrong'), 500);
+            }
+        }
+
+        function generateAlphabetOrder() {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const startIndex = Math.floor(Math.random() * 21);
+            const sequence = alphabet.slice(startIndex, startIndex + 5).split('');
+            const shuffled = [...sequence].sort(() => Math.random() - 0.5);
+
+            currentChallenge.data = {
+                correct: sequence,
+                current: [],
+                shuffled: shuffled
+            };
+
+            document.getElementById('challengeInstruction').textContent = 'Put the letters in ABC order:';
+            renderAlphabetOrder();
+            readInstruction("Put the letters in A B C order. Click them one by one, starting with the first letter!");
+        }
+
+        function renderAlphabetOrder() {
+            const data = currentChallenge.data;
+            document.getElementById('challengeArea').innerHTML = `
+                <div class="letter-slots">
+                    ${data.correct.map((_, i) => `
+                        <div class="letter-slot ${data.current[i] ? 'filled' : ''}">${data.current[i] || ''}</div>
+                    `).join('')}
+                </div>
+                <div class="draggable-letters">
+                    ${data.shuffled.map(l => `
+                        <div class="drag-letter ${data.current.includes(l) ? 'used' : ''}"
+                             onclick="selectOrderLetter(this, '${l}')">${l}</div>
+                    `).join('')}
+                </div>
+                <button class="btn btn-secondary btn-small" onclick="clearOrderSelection()">Clear</button>
+            `;
+        }
+
+        function selectOrderLetter(el, letter) {
+            if (currentChallenge.data.current.includes(letter)) return;
+
+            const nextIndex = currentChallenge.data.current.length;
+            const correctLetter = currentChallenge.data.correct[nextIndex];
+
+            if (letter === correctLetter) {
+                currentChallenge.data.current.push(letter);
+                playSound('correct');
+                renderAlphabetOrder();
+
+                if (currentChallenge.data.current.length === currentChallenge.data.correct.length) {
+                    currentChallenge.correctAnswers++;
+                    currentChallenge.score += 20;
+                    setTimeout(nextQuestion, 800);
+                }
+            } else {
+                el.style.background = '#C62828';
+                playSound('wrong');
+                setTimeout(() => el.style.background = '', 500);
+            }
+        }
+
+        function clearOrderSelection() {
+            currentChallenge.data.current = [];
+            renderAlphabetOrder();
+        }
+
+        function generateUpperLower() {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const targetIndex = Math.floor(Math.random() * 26);
+            const upperLetter = alphabet[targetIndex];
+            const lowerLetter = upperLetter.toLowerCase();
+
+            let options = [lowerLetter];
+            while (options.length < 4) {
+                const randomLower = alphabet[Math.floor(Math.random() * 26)].toLowerCase();
+                if (!options.includes(randomLower)) {
+                    options.push(randomLower);
+                }
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            document.getElementById('challengeInstruction').textContent = 'Find the matching small letter:';
+            document.getElementById('challengeArea').innerHTML = `
+                <div class="target-letter">${upperLetter}</div>
+                <div class="floating-letters">
+                    ${options.map(l => `
+                        <button class="letter-btn" onclick="checkLetter(this, '${l}', '${lowerLetter}')">${l}</button>
+                    `).join('')}
+                </div>
+            `;
+            readInstruction(`This is the big letter ${upperLetter}. Find the matching small letter and click it!`);
+        }
+
+        function generateMissingLetter() {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const startIndex = Math.floor(Math.random() * 22);
+            const sequence = alphabet.slice(startIndex, startIndex + 5).split('');
+            const missingIndex = Math.floor(Math.random() * 5);
+            const missingLetter = sequence[missingIndex];
+            sequence[missingIndex] = '_';
+
+            let options = [missingLetter];
+            while (options.length < 4) {
+                const randomLetter = alphabet[Math.floor(Math.random() * 26)];
+                if (!options.includes(randomLetter)) {
+                    options.push(randomLetter);
+                }
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            document.getElementById('challengeInstruction').textContent = 'What letter is missing?';
+            document.getElementById('challengeArea').innerHTML = `
+                <div class="letter-slots">
+                    ${sequence.map(l => `
+                        <div class="letter-slot filled" style="${l === '_' ? 'color: var(--magic-glow); font-size: 2em;' : ''}">${l}</div>
+                    `).join('')}
+                </div>
+                <div class="floating-letters" style="margin-top: 30px;">
+                    ${options.map(l => `
+                        <button class="letter-btn" onclick="checkLetter(this, '${l}', '${missingLetter}')">${l}</button>
+                    `).join('')}
+                </div>
+            `;
+            readInstruction("One letter is missing! Look at the letters and find which one is missing. Then click on it!");
+        }
+
+        function generateFullAlphabet() {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            currentChallenge.data = {
+                alphabet: alphabet.split(''),
+                currentIndex: 0
+            };
+
+            document.getElementById('challengeInstruction').textContent = 'Click the letters in order: A, B, C...';
+            renderFullAlphabet();
+            speak("Let's do the whole alphabet! Click the letters in order, starting with A, then B, then C, all the way to Z!");
+        }
+
+        function renderFullAlphabet() {
+            const data = currentChallenge.data;
+            const nextLetter = data.alphabet[data.currentIndex];
+            const shuffled = [...data.alphabet].sort(() => Math.random() - 0.5);
+
+            document.getElementById('challengeArea').innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <span style="font-size: 1.2em;">Progress: </span>
+                    <span style="color: var(--magic-glow); font-size: 1.5em;">${data.alphabet.slice(0, data.currentIndex).join(' ')}</span>
+                    <span style="color: var(--gryffindor-gold); font-size: 2em;"> ?</span>
+                </div>
+                <p style="margin-bottom: 20px;">Next letter: <strong style="color: var(--magic-glow);">${nextLetter}</strong></p>
+                <button class="audio-btn" onclick="speakLetter('${nextLetter}')" style="margin-bottom: 20px;">🔊</button>
+                <div class="floating-letters">
+                    ${shuffled.slice(0, 12).map(l => `
+                        <button class="letter-btn" onclick="checkFullAlphabet(this, '${l}')"
+                                ${data.alphabet.slice(0, data.currentIndex).includes(l) ? 'disabled style="opacity:0.3"' : ''}>${l}</button>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function checkFullAlphabet(btn, letter) {
+            const data = currentChallenge.data;
+            const expected = data.alphabet[data.currentIndex];
+
+            if (letter === expected) {
+                btn.classList.add('correct');
+                data.currentIndex++;
+                currentChallenge.questionIndex++;
+                currentChallenge.correctAnswers++;
+                currentChallenge.score += 5;
+                gameState.stats.lettersFound++;
+                playSound('correct');
+                speakLetter(letter);
+
+                const progress = (data.currentIndex / 26) * 100;
+                document.getElementById('progressFill').style.width = progress + '%';
+                document.getElementById('progressCurrent').textContent = data.currentIndex;
+
+                if (data.currentIndex >= 26) {
+                    setTimeout(completeChallenge, 800);
+                } else {
+                    setTimeout(renderFullAlphabet, 600);
+                }
+            } else {
+                btn.classList.add('wrong');
+                playSound('wrong');
+                setTimeout(() => btn.classList.remove('wrong'), 500);
+            }
+        }
+
+        // =============================================
+        // SPEAKING CHALLENGES
+        // =============================================
+
+        function startSpeakingChallenge(category) {
+            currentChallenge = {
+                type: 'speaking',
+                category: category,
+                questionIndex: 0,
+                score: 0,
+                total: Math.min(speakingData[category].length, 8),
+                correctAnswers: 0
+            };
+
+            showScreen('challengeScreen');
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressCurrent').textContent = '0';
+            document.getElementById('progressTotal').textContent = currentChallenge.total.toString();
+            document.getElementById('challengeTitle').textContent = '🎤 Speaking Challenge';
+
+            generateSpeakingChallenge();
+        }
+
+        function generateSpeakingChallenge() {
+            const category = currentChallenge.category || 'spells';
+            const data = speakingData[category];
+            const item = data[currentChallenge.questionIndex % data.length];
+
+            currentChallenge.currentWord = item.word.toLowerCase();
+
+            document.getElementById('challengeInstruction').textContent = 'Say this word clearly:';
+            document.getElementById('challengeArea').innerHTML = `
+                <div class="spell-word">${item.word}</div>
+                <div class="hint-text">${item.hint}</div>
+                <button class="audio-btn" onclick="speakWord('${item.word}')" style="margin: 20px 0;">🔊 Listen</button>
+                <div style="margin: 30px 0;">
+                    <button class="speech-btn" id="speechBtn" onclick="toggleListening()">🎤</button>
+                </div>
+                <div class="speech-display" id="speechDisplay">Press the microphone and speak!</div>
+                <p class="hint-text">Tip: Speak slowly and clearly</p>
+            `;
+            // Say the word, then give instruction
+            speak(`Say the word: ${item.word}. Click the speaker button to hear it again. Then click the microphone and say it!`);
+
+            if (!speechRecognition) {
+                document.getElementById('challengeArea').innerHTML += `
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(255,200,0,0.2); border-radius: 10px;">
+                        <p>Speech recognition not available in your browser.</p>
+                        <button class="btn btn-small" onclick="skipSpeakingQuestion()">Skip (No points)</button>
+                        <button class="btn btn-small" onclick="manualCorrect()">I said it correctly (+10 pts)</button>
+                    </div>
+                `;
+            }
+        }
+
+        function toggleListening() {
+            if (!speechRecognition) return;
+
+            if (isListening) {
+                speechRecognition.stop();
+                isListening = false;
+            } else {
+                try {
+                    speechRecognition.start();
+                    isListening = true;
+                    document.getElementById('speechDisplay').textContent = 'Listening...';
+                } catch (e) {
+                    console.log('Speech error:', e);
+                }
+            }
+            updateSpeechButton();
+        }
+
+        function updateSpeechButton() {
+            const btn = document.getElementById('speechBtn');
+            if (btn) {
+                btn.classList.toggle('listening', isListening);
+            }
+        }
+
+        function handleSpeechResult(event) {
+            let transcript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                transcript += event.results[i][0].transcript;
+            }
+
+            const display = document.getElementById('speechDisplay');
+            if (display) {
+                display.textContent = transcript || 'Listening...';
+            }
+
+            if (event.results[event.results.length - 1].isFinal) {
+                checkSpeechResult(transcript);
+            }
+        }
+
+        function checkSpeechResult(transcript) {
+            const spoken = transcript.toLowerCase().trim();
+            const target = currentChallenge.currentWord.toLowerCase();
+
+            // Flexible matching
+            const isCorrect = spoken.includes(target) ||
+                              target.includes(spoken) ||
+                              levenshteinDistance(spoken, target) <= 2;
+
+            const display = document.getElementById('speechDisplay');
+
+            if (isCorrect) {
+                display.textContent = '✓ Correct! ' + transcript;
+                display.style.color = '#4CAF50';
+                currentChallenge.correctAnswers++;
+                currentChallenge.score += 15;
+                gameState.stats.wordsSpoken++;
+                playSound('correct');
+                setTimeout(nextQuestion, 1500);
+            } else {
+                display.textContent = 'Try again: "' + transcript + '"';
+                display.style.color = '#EF5350';
+                playSound('wrong');
+            }
+        }
+
+        function levenshteinDistance(a, b) {
+            if (a.length === 0) return b.length;
+            if (b.length === 0) return a.length;
+            const matrix = [];
+            for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+            for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+            for (let i = 1; i <= b.length; i++) {
+                for (let j = 1; j <= a.length; j++) {
+                    if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                        matrix[i][j] = matrix[i - 1][j - 1];
+                    } else {
+                        matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);
+                    }
+                }
+            }
+            return matrix[b.length][a.length];
+        }
+
+        function skipSpeakingQuestion() {
+            nextQuestion();
+        }
+
+        function manualCorrect() {
+            currentChallenge.correctAnswers++;
+            currentChallenge.score += 10;
+            gameState.stats.wordsSpoken++;
+            playSound('correct');
+            setTimeout(nextQuestion, 500);
+        }
+
+        // =============================================
+        // VOCABULARY CHALLENGES
+        // =============================================
+
+        function generateVocabularyChallenge() {
+            const category = currentChallenge.category || 'animals';
+            const items = vocabularyData[category] || vocabularyData.animals;
+            const target = items[currentChallenge.questionIndex % items.length];
+
+            let options = [target.word];
+            while (options.length < 4) {
+                const random = items[Math.floor(Math.random() * items.length)].word;
+                if (!options.includes(random)) {
+                    options.push(random);
+                }
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            document.getElementById('challengeInstruction').textContent = 'What is this?';
+            document.getElementById('challengeArea').innerHTML = `
+                <div class="word-image">${target.emoji}</div>
+                <button class="audio-btn" onclick="speakWord('${target.word}')">🔊</button>
+                <div class="word-options">
+                    ${options.map(w => `
+                        <button class="word-btn" onclick="checkWord(this, '${w}', '${target.word}')">${w}</button>
+                    `).join('')}
+                </div>
+            `;
+            readInstruction("Look at the picture! What is it? Click on the right word.");
+        }
+
+        function checkWord(btn, clicked, target) {
+            if (clicked.toLowerCase() === target.toLowerCase()) {
+                btn.style.background = '#2E7D32';
+                btn.style.borderColor = '#4CAF50';
+                currentChallenge.correctAnswers++;
+                currentChallenge.score += 15;
+                playSound('correct');
+                speakWord(target);
+                setTimeout(nextQuestion, 1000);
+            } else {
+                btn.style.background = '#C62828';
+                btn.style.borderColor = '#EF5350';
+                playSound('wrong');
+                setTimeout(() => {
+                    btn.style.background = '';
+                    btn.style.borderColor = '';
+                }, 500);
+            }
+        }
+
+        // =============================================
+        // READING CHALLENGES
+        // =============================================
+
+        function generateReadingChallenge() {
+            const challenge = readingChallenges[currentChallenge.questionIndex % readingChallenges.length];
+
+            document.getElementById('challengeInstruction').textContent = 'Read carefully and answer:';
+            document.getElementById('challengeArea').innerHTML = `
+                <div class="reading-passage">${challenge.passage}</div>
+                <button class="listen-btn" onclick="replayReadingPassage()" style="margin: 15px auto; display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(139, 69, 19, 0.4); border: 2px solid var(--gryffindor-gold); color: var(--parchment); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 1em;">
+                    <span style="font-size: 1.3em;">🔊</span> Listen Again
+                </button>
+                <div class="question-text">${challenge.question}</div>
+                <div class="word-options">
+                    ${challenge.options.map((opt, i) => `
+                        <button class="word-btn" onclick="checkReading(this, ${i}, ${challenge.correct})">${opt}</button>
+                    `).join('')}
+                </div>
+            `;
+            // Store current passage for replay
+            currentChallenge.currentPassage = challenge.passage;
+            currentChallenge.currentQuestion = challenge.question;
+        }
+
+        function replayReadingPassage() {
+            if (currentChallenge.currentPassage) {
+                speak(currentChallenge.currentPassage, () => {
+                    setTimeout(() => speak(currentChallenge.currentQuestion), 500);
+                });
+            }
+        }
+
+        function checkReading(btn, selected, correct) {
+            if (selected === correct) {
+                btn.style.background = '#2E7D32';
+                btn.style.borderColor = '#4CAF50';
+                currentChallenge.correctAnswers++;
+                currentChallenge.score += 25;
+                gameState.stats.passagesRead++;
+                playSound('correct');
+                setTimeout(nextQuestion, 1000);
+            } else {
+                btn.style.background = '#C62828';
+                btn.style.borderColor = '#EF5350';
+                playSound('wrong');
+                setTimeout(() => {
+                    btn.style.background = '';
+                    btn.style.borderColor = '';
+                }, 500);
+            }
+        }
+
+        // =============================================
+        // WORD MATCH CHALLENGES
+        // =============================================
+
+        function generateWordMatchChallenge() {
+            const items = vocabularyData.animals;
+            const target = items[currentChallenge.questionIndex % items.length];
+            const isMatch = Math.random() > 0.3; // 70% chance of match
+
+            let displayWord = target.word;
+            if (!isMatch) {
+                const other = items.filter(i => i.word !== target.word);
+                displayWord = other[Math.floor(Math.random() * other.length)].word;
+            }
+
+            currentChallenge.data = { isMatch, target: target.word };
+
+            document.getElementById('challengeInstruction').textContent = 'Does the word match the picture?';
+            document.getElementById('challengeArea').innerHTML = `
+                <div style="display: flex; gap: 40px; align-items: center; flex-wrap: wrap; justify-content: center;">
+                    <div class="word-image">${target.emoji}</div>
+                    <div class="target-letter" style="font-size: 2.5em;">${displayWord}</div>
+                </div>
+                <div class="word-options" style="margin-top: 30px;">
+                    <button class="word-btn" onclick="checkMatch(true)" style="background: #2E7D32;">✓ Yes, it matches!</button>
+                    <button class="word-btn" onclick="checkMatch(false)" style="background: #C62828;">✗ No, wrong word!</button>
+                </div>
+            `;
+            speak(`Look at the picture and the word ${displayWord}. Do they match? Click Yes or No!`);
+        }
+
+        function checkMatch(userSaysMatch) {
+            const actuallyMatches = currentChallenge.data.isMatch;
+
+            if (userSaysMatch === actuallyMatches) {
+                currentChallenge.correctAnswers++;
+                currentChallenge.score += 10;
+                playSound('correct');
+            } else {
+                playSound('wrong');
+            }
+            setTimeout(nextQuestion, 500);
+        }
+
+        // =============================================
+        // SENTENCE BUILDING
+        // =============================================
+
+        function generateSentenceChallenge() {
+            const challenge = sentenceData[currentChallenge.questionIndex % sentenceData.length];
+            const shuffled = [...challenge.words].sort(() => Math.random() - 0.5);
+
+            currentChallenge.data = {
+                correct: challenge.correct,
+                words: shuffled,
+                selected: []
+            };
+
+            document.getElementById('challengeInstruction').textContent = 'Build the sentence:';
+            renderSentence();
+            speak("Build a sentence! Click the words in the right order, then click Check Sentence.");
+        }
+
+        function renderSentence() {
+            const data = currentChallenge.data;
+            document.getElementById('challengeArea').innerHTML = `
+                <div class="sentence-area">
+                    ${data.selected.map((w, i) => `
+                        <span class="sentence-word" onclick="removeSentenceWord(${i})">${w}</span>
+                    `).join('')}
+                    ${data.selected.length === 0 ? '<span style="opacity: 0.5;">Click words below to build...</span>' : ''}
+                </div>
+                <div class="draggable-letters">
+                    ${data.words.map(w => `
+                        <div class="drag-letter ${data.selected.includes(w) ? 'used' : ''}"
+                             onclick="addSentenceWord('${w}')">${w}</div>
+                    `).join('')}
+                </div>
+                <button class="btn" onclick="checkSentence()">Check Sentence</button>
+            `;
+        }
+
+        function addSentenceWord(word) {
+            if (!currentChallenge.data.selected.includes(word)) {
+                currentChallenge.data.selected.push(word);
+                renderSentence();
+            }
+        }
+
+        function removeSentenceWord(index) {
+            currentChallenge.data.selected.splice(index, 1);
+            renderSentence();
+        }
+
+        function checkSentence() {
+            const built = currentChallenge.data.selected.join(' ');
+            if (built === currentChallenge.data.correct) {
+                currentChallenge.correctAnswers++;
+                currentChallenge.score += 20;
+                gameState.stats.sentencesBuilt++;
+                playSound('correct');
+                speakWord(built);
+                setTimeout(nextQuestion, 1500);
+            } else {
+                playSound('wrong');
+                const hint = currentChallenge.data.correct.split(' ')[0];
+                document.getElementById('challengeArea').insertAdjacentHTML('beforeend',
+                    `<p style="color: #EF5350; margin-top: 20px;">Try again! Start with "${hint}"</p>`
+                );
+            }
+        }
+
+        // =============================================
+        // BOSS CHALLENGES
+        // =============================================
+
+        function generateBossChallenge() {
+            // Boss challenge combines multiple types
+            currentChallenge.total = 8;
+            document.getElementById('progressTotal').textContent = '8';
+
+            const types = ['vocabulary', 'reading', 'sentence', 'vocabulary', 'reading', 'sentence', 'vocabulary', 'reading'];
+            currentChallenge.bossTypes = types;
+            currentChallenge.category = 'animals';
+
+            document.getElementById('challengeInstruction').textContent = 'Complete all challenges to win!';
+            speak("This is the boss challenge! Complete all the challenges to win. Good luck, wizard!");
+            setTimeout(generateBossQuestion, 2500);
+        }
+
+        function generateBossQuestion() {
+            const type = currentChallenge.bossTypes[currentChallenge.questionIndex];
+
+            switch(type) {
+                case 'vocabulary':
+                    generateVocabularyChallenge();
+                    break;
+                case 'reading':
+                    generateReadingChallenge();
+                    break;
+                case 'sentence':
+                    generateSentenceChallenge();
+                    break;
+            }
+        }
+
+        // =============================================
+        // PROGRESS & COMPLETION
+        // =============================================
+
+        function nextQuestion() {
+            currentChallenge.questionIndex++;
+            const progress = (currentChallenge.questionIndex / currentChallenge.total) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressCurrent').textContent = currentChallenge.questionIndex;
+
+            if (currentChallenge.questionIndex >= currentChallenge.total) {
+                completeChallenge();
+                return;
+            }
+
+            // Generate next based on type
+            if (currentChallenge.bossTypes) {
+                generateBossQuestion();
+                return;
+            }
+
+            switch(currentChallenge.type) {
+                case 'findLetter': generateFindLetter(); break;
+                case 'alphabetOrder': generateAlphabetOrder(); break;
+                case 'upperLower': generateUpperLower(); break;
+                case 'missingLetter': generateMissingLetter(); break;
+                case 'vocabulary': generateVocabularyChallenge(); break;
+                case 'reading': generateReadingChallenge(); break;
+                case 'wordMatch': generateWordMatchChallenge(); break;
+                case 'sentence': generateSentenceChallenge(); break;
+                case 'speaking': generateSpeakingChallenge(); break;
+            }
+        }
+
+        function completeChallenge() {
+            if (speechRecognition && isListening) {
+                speechRecognition.stop();
+                isListening = false;
+            }
+
+            const accuracy = currentChallenge.correctAnswers / currentChallenge.total;
+            let stars = 1;
+            if (accuracy >= 0.9) stars = 3;
+            else if (accuracy >= 0.7) stars = 2;
+
+            const points = Math.round(currentChallenge.score * (stars / 2));
+            const galleons = Math.round(points / 8);
+
+            gameState.housePoints += points;
+            gameState.galleons += galleons;
+
+            // Level completion
+            if (currentChallenge.levelId) {
+                if (!gameState.completedLevels.includes(currentChallenge.levelId)) {
+                    gameState.completedLevels.push(currentChallenge.levelId);
+                }
+                const existingStars = gameState.levelStars[currentChallenge.levelId] || 0;
+                gameState.levelStars[currentChallenge.levelId] = Math.max(existingStars, stars);
+            }
+
+            // Check trophies
+            const newTrophies = checkTrophies();
+
+            // Show popup
+            document.getElementById('popupTitle').textContent = 'Challenge Complete!';
+            document.getElementById('popupStars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+            document.getElementById('popupPoints').textContent = points;
+            document.getElementById('popupMessage').textContent =
+                `${currentChallenge.correctAnswers}/${currentChallenge.total} correct! +${galleons} Galleons`;
+
+            // Show new trophy if earned
+            if (newTrophies.length > 0) {
+                const trophy = allTrophies.find(t => t.id === newTrophies[0]);
+                document.getElementById('popupReward').style.display = 'block';
+                document.getElementById('popupRewardIcon').textContent = trophy.icon;
+                document.getElementById('popupRewardText').textContent = `New Trophy: ${trophy.name}!`;
+            } else {
+                document.getElementById('popupReward').style.display = 'none';
+            }
+
+            document.getElementById('scorePopup').classList.add('active');
+
+            // Read the results aloud
+            if (stars === 3) {
+                speak(`Amazing job! You got ${currentChallenge.correctAnswers} out of ${currentChallenge.total} correct and earned 3 stars! You earned ${points} points and ${galleons} galleons!`);
+            } else if (stars === 2) {
+                speak(`Well done! You got ${currentChallenge.correctAnswers} out of ${currentChallenge.total} correct and earned 2 stars! You earned ${points} points and ${galleons} galleons!`);
+            } else {
+                speak(`Good try! You got ${currentChallenge.correctAnswers} out of ${currentChallenge.total} correct. Keep practicing to earn more stars!`);
+            }
+
+            updateStats();
+            saveGame();
+        }
+
+        function checkTrophies() {
+            const newTrophies = [];
+
+            const checks = [
+                { id: 'first_step', condition: true },
+                { id: 'hundred_points', condition: gameState.housePoints >= 100 },
+                { id: 'five_hundred', condition: gameState.housePoints >= 500 },
+                { id: 'fluffy_friend', condition: gameState.completedLevels.includes(1) },
+                { id: 'key_catcher', condition: gameState.completedLevels.includes(3) },
+                { id: 'potion_master', condition: gameState.completedLevels.includes(6) },
+                { id: 'wing1_complete', condition: gameState.completedLevels.filter(l => l >= 1 && l <= 10).length >= 10 },
+                { id: 'wing2_complete', condition: gameState.completedLevels.filter(l => l >= 11 && l <= 20).length >= 10 },
+                { id: 'letter_spotter', condition: gameState.stats.lettersFound >= 50 },
+                { id: 'spell_caster', condition: gameState.stats.wordsSpoken >= 50 },
+                { id: 'sentence_builder', condition: gameState.stats.sentencesBuilt >= 25 },
+                { id: 'bookworm', condition: gameState.stats.passagesRead >= 20 },
+                { id: 'abc_wizard', condition: currentChallenge.type === 'fullAlphabet' && currentChallenge.correctAnswers >= 26 },
+                { id: 'shopper', condition: gameState.ownedItems.length >= 5 },
+                { id: 'collector', condition: gameState.ownedItems.length >= 10 }
+            ];
+
+            checks.forEach(check => {
+                if (check.condition && !gameState.trophies.includes(check.id)) {
+                    gameState.trophies.push(check.id);
+                    newTrophies.push(check.id);
+                }
+            });
+
+            return newTrophies;
+        }
+
+        function closePopup() {
+            document.getElementById('scorePopup').classList.remove('active');
+            showScreen('hubScreen');
+        }
+
+        function exitChallenge() {
+            if (speechRecognition && isListening) {
+                speechRecognition.stop();
+                isListening = false;
+            }
+            if (confirm('Exit challenge? Progress will be lost.')) {
+                showScreen('hubScreen');
+            }
+        }
+
+        // =============================================
+        // DIAGON ALLEY SHOP
+        // =============================================
+
+        function showDiagonAlley() {
+            document.getElementById('shopGalleons').textContent = gameState.galleons;
+
+            let html = '';
+
+            const categories = [
+                { name: '🪄 Wands', items: shopItems.wands },
+                { name: '🐾 Pets', items: shopItems.pets },
+                { name: '👘 Robes', items: shopItems.robes },
+                { name: '✨ Magical Items', items: shopItems.extras }
+            ];
+
+            categories.forEach(cat => {
+                html += `<h3 class="shop-category">${cat.name}</h3>`;
+                html += '<div class="shop-grid">';
+                cat.items.forEach(item => {
+                    const owned = gameState.ownedItems.includes(item.id);
+                    const canAfford = gameState.galleons >= item.price;
+                    html += `
+                        <div class="shop-item ${owned ? 'owned' : ''}">
+                            <div class="shop-item-icon">${item.icon}</div>
+                            <div class="shop-item-name">${item.name}</div>
+                            <p style="font-size: 0.85em; opacity: 0.8;">${item.desc}</p>
+                            <div class="shop-item-price">🪙 ${item.price}</div>
+                            ${owned
+                                ? '<button class="btn btn-small" disabled>Owned ✓</button>'
+                                : `<button class="btn btn-small" onclick="buyItem('${item.id}', ${item.price})" ${!canAfford ? 'disabled' : ''}>
+                                    ${canAfford ? 'Buy' : 'Need more gold'}
+                                   </button>`
+                            }
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            });
+
+            document.getElementById('shopArea').innerHTML = html;
+            showScreen('diagonAlleyScreen');
+        }
+
+        function buyItem(itemId, price) {
+            if (gameState.galleons >= price && !gameState.ownedItems.includes(itemId)) {
+                gameState.galleons -= price;
+                gameState.ownedItems.push(itemId);
+
+                // Check for shopping trophies
+                checkTrophies();
+
+                saveGame();
+                updateStats();
+                updateAvatarDisplay();
+                showDiagonAlley(); // Refresh shop
+
+                playSound('correct');
+            }
+        }
+
+        // =============================================
+        // TROPHY ROOM
+        // =============================================
+
+        function showTrophyRoom() {
+            const grid = document.getElementById('trophyGrid');
+            grid.innerHTML = allTrophies.map(trophy => `
+                <div class="trophy-card ${gameState.trophies.includes(trophy.id) ? 'unlocked' : 'locked'}">
+                    <div class="trophy-icon">${trophy.icon}</div>
+                    <div class="trophy-name">${trophy.name}</div>
+                    <p style="font-size: 0.8em; margin-top: 5px; opacity: 0.8;">${trophy.desc}</p>
+                </div>
+            `).join('');
+            showScreen('trophyRoomScreen');
+        }
+
+        // =============================================
+        // AUDIO & VOICE SYSTEM
+        // =============================================
+
+        let selectedVoice = null;
+        let musicContext = null;
+        let musicPlaying = false;
+        let musicGain = null;
+
+        // Find a natural-sounding voice (prefer Google/premium voices)
+        function initVoice() {
+            const loadVoices = () => {
+                const voices = speechSynthesis.getVoices();
+                console.log('Available voices:', voices.map(v => `${v.name} (${v.lang})`));
+
+                // Prefer these natural-sounding voices (Google voices are typically higher quality)
+                const preferredVoices = [
+                    'Google UK English Female',     // Chrome - very natural
+                    'Google US English',            // Chrome - natural
+                    'Microsoft Aria Online',        // Edge - neural voice
+                    'Microsoft Jenny Online',       // Edge - neural voice
+                    'Microsoft Libby Online',       // Edge - neural UK voice
+                    'Samantha',                     // macOS - good quality
+                    'Karen',                        // macOS - Australian
+                    'Daniel',                       // macOS - British male
+                    'Moira',                        // macOS - Irish
+                    'Tessa',                        // macOS - South African
+                    'Microsoft Zira',               // Windows - decent
+                    'Microsoft Hazel',              // Windows - UK
+                ];
+
+                for (const preferred of preferredVoices) {
+                    const found = voices.find(v => v.name.includes(preferred));
+                    if (found) {
+                        selectedVoice = found;
+                        console.log('Selected voice:', found.name);
+                        return;
+                    }
+                }
+
+                // Fallback: find any English voice with "natural" or "online" in the name (usually better quality)
+                const naturalVoice = voices.find(v =>
+                    v.lang.startsWith('en') &&
+                    (v.name.toLowerCase().includes('natural') ||
+                     v.name.toLowerCase().includes('online') ||
+                     v.name.toLowerCase().includes('neural'))
+                );
+                if (naturalVoice) {
+                    selectedVoice = naturalVoice;
+                    console.log('Using natural voice:', selectedVoice.name);
+                    return;
+                }
+
+                // Fallback: find any English female voice
+                const englishVoice = voices.find(v =>
+                    v.lang.startsWith('en') &&
+                    (v.name.toLowerCase().includes('female') ||
+                     v.name.includes('Samantha') ||
+                     v.name.includes('Karen'))
+                );
+                if (englishVoice) {
+                    selectedVoice = englishVoice;
+                } else {
+                    // Just use first English voice
+                    selectedVoice = voices.find(v => v.lang.startsWith('en')) || voices[0];
+                }
+                console.log('Using voice:', selectedVoice?.name);
+            };
+
+            if (speechSynthesis.getVoices().length > 0) {
+                loadVoices();
+            }
+            speechSynthesis.onvoiceschanged = loadVoices;
+        }
+
+        // Play main menu instructions when button is pressed
+        function playMainMenuInstructions() {
+            speak("Welcome to Hogwarts English Quest! Click Begin Adventure to start a new magical journey, or Continue Quest to keep playing your saved game. Let's learn English together!");
+        }
+
+        // Speak with natural voice - for instructions
+        function speak(text, callback) {
+            if (!('speechSynthesis' in window)) return;
+
+            speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+
+            // Settings tuned for more natural speech
+            utterance.rate = 0.9;   // Slightly slower for clarity
+            utterance.pitch = 1.0;  // Natural pitch (higher values sound robotic)
+            utterance.volume = 1;
+            utterance.lang = selectedVoice?.lang || 'en-US';
+
+            if (callback) {
+                utterance.onend = callback;
+            }
+
+            speechSynthesis.speak(utterance);
+        }
+
+        // Speak letter clearly
+        function speakLetter(letter) {
+            if (!('speechSynthesis' in window)) return;
+
+            speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(letter);
+
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+
+            utterance.rate = 0.65;  // Slow for letters
+            utterance.pitch = 1.0;  // Natural pitch
+            utterance.lang = selectedVoice?.lang || 'en-US';
+
+            speechSynthesis.speak(utterance);
+        }
+
+        // Speak word clearly
+        function speakWord(word) {
+            if (!('speechSynthesis' in window)) return;
+
+            speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(word);
+
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+
+            utterance.rate = 0.8;   // Clear pace for words
+            utterance.pitch = 1.0;  // Natural pitch
+            utterance.lang = selectedVoice?.lang || 'en-US';
+
+            speechSynthesis.speak(utterance);
+        }
+
+        // Read instructions automatically
+        function readInstruction(text) {
+            // Small delay to let UI update first
+            setTimeout(() => speak(text), 300);
+        }
+
+        // =============================================
+        // MAGICAL BACKGROUND MUSIC
+        // =============================================
+
+        function createMagicalMusic() {
+            try {
+                musicContext = new (window.AudioContext || window.webkitAudioContext)();
+                musicGain = musicContext.createGain();
+                musicGain.gain.value = 0.15; // Low volume background
+                musicGain.connect(musicContext.destination);
+
+                // Create a magical ambient soundscape
+                playMagicalAmbience();
+            } catch (e) {
+                console.log('Music not supported');
+            }
+        }
+
+        function playMagicalAmbience() {
+            if (!musicContext || !musicPlaying) return;
+
+            // Magical chord progression (dreamy, Harry Potter-like)
+            const chords = [
+                [261.63, 329.63, 392.00], // C major
+                [293.66, 369.99, 440.00], // D minor
+                [246.94, 311.13, 369.99], // B minor
+                [261.63, 311.13, 392.00], // C with flat 3
+            ];
+
+            const now = musicContext.currentTime;
+
+            chords.forEach((chord, chordIndex) => {
+                chord.forEach((freq, noteIndex) => {
+                    const osc = musicContext.createOscillator();
+                    const noteGain = musicContext.createGain();
+
+                    // Use soft waveforms
+                    osc.type = noteIndex === 0 ? 'sine' : 'triangle';
+                    osc.frequency.value = freq;
+
+                    noteGain.gain.value = 0;
+
+                    osc.connect(noteGain);
+                    noteGain.connect(musicGain);
+
+                    const startTime = now + (chordIndex * 4);
+                    const endTime = startTime + 4;
+
+                    // Fade in and out
+                    noteGain.gain.setValueAtTime(0, startTime);
+                    noteGain.gain.linearRampToValueAtTime(0.08, startTime + 1);
+                    noteGain.gain.linearRampToValueAtTime(0.08, endTime - 1);
+                    noteGain.gain.linearRampToValueAtTime(0, endTime);
+
+                    osc.start(startTime);
+                    osc.stop(endTime);
+                });
+            });
+
+            // Add magical sparkle sounds
+            for (let i = 0; i < 8; i++) {
+                const sparkle = musicContext.createOscillator();
+                const sparkleGain = musicContext.createGain();
+
+                sparkle.type = 'sine';
+                sparkle.frequency.value = 800 + Math.random() * 1200;
+
+                sparkleGain.gain.value = 0;
+                sparkle.connect(sparkleGain);
+                sparkleGain.connect(musicGain);
+
+                const sparkleTime = now + Math.random() * 16;
+                sparkleGain.gain.setValueAtTime(0, sparkleTime);
+                sparkleGain.gain.linearRampToValueAtTime(0.05, sparkleTime + 0.1);
+                sparkleGain.gain.linearRampToValueAtTime(0, sparkleTime + 0.5);
+
+                sparkle.start(sparkleTime);
+                sparkle.stop(sparkleTime + 0.5);
+            }
+
+            // Loop the music
+            if (musicPlaying) {
+                setTimeout(playMagicalAmbience, 16000);
+            }
+        }
+
+        function startMusic() {
+            if (musicPlaying) return;
+            musicPlaying = true;
+
+            if (!musicContext) {
+                createMagicalMusic();
+            } else {
+                musicContext.resume();
+                playMagicalAmbience();
+            }
+
+            updateMusicButton();
+        }
+
+        function stopMusic() {
+            musicPlaying = false;
+            if (musicContext) {
+                musicContext.suspend();
+            }
+            updateMusicButton();
+        }
+
+        function toggleMusic() {
+            if (musicPlaying) {
+                stopMusic();
+            } else {
+                startMusic();
+            }
+        }
+
+        function updateMusicButton() {
+            const btn = document.getElementById('musicToggle');
+            if (btn) {
+                btn.textContent = musicPlaying ? '🔊 Music On' : '🔇 Music Off';
+            }
+        }
+
+        // Sound effects
+        function playSound(type) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'correct') {
+                    // Happy magical sound
+                    osc.frequency.value = 523.25;
+                    osc.type = 'sine';
+                    gain.gain.value = 0.3;
+
+                    // Add a second tone for magic effect
+                    const osc2 = ctx.createOscillator();
+                    const gain2 = ctx.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(ctx.destination);
+                    osc2.frequency.value = 659.25; // E note
+                    osc2.type = 'sine';
+                    gain2.gain.value = 0.2;
+                    osc2.start();
+                    gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                    osc2.stop(ctx.currentTime + 0.4);
+                } else {
+                    osc.frequency.value = 200;
+                    osc.type = 'triangle';
+                    gain.gain.value = 0.2;
+                }
+
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                osc.stop(ctx.currentTime + 0.3);
+            } catch (e) {
+                // Audio not supported
+            }
+        }
+
+        // Play a magical welcome fanfare
+        function playWelcomeFanfare() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const notes = [392, 493.88, 587.33, 783.99]; // G B D G (magical arpeggio)
+
+                notes.forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.value = freq;
+                    osc.type = 'sine';
+
+                    const startTime = ctx.currentTime + (i * 0.15);
+                    gain.gain.setValueAtTime(0, startTime);
+                    gain.gain.linearRampToValueAtTime(0.3, startTime + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.6);
+
+                    osc.start(startTime);
+                    osc.stop(startTime + 0.6);
+                });
+            } catch(e) {}
+        }
+
+        // =============================================
+        // INIT
+        // =============================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            initSpeechRecognition();
+            initVoice();
+            document.querySelector('.house-card.gryffindor').classList.add('selected');
+            // No automatic speech on main menu - user can click the Listen to Instructions button
+        });
+
+        // Start music on first user interaction (required by browsers)
+        document.addEventListener('click', function startMusicOnce() {
+            startMusic();
+            playWelcomeFanfare();
+            document.removeEventListener('click', startMusicOnce);
+        }, { once: true });
+    </script>
+</body>
+</html>
