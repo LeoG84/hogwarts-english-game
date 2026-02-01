@@ -161,6 +161,32 @@
             transform: none;
         }
 
+        /* Listen Button */
+        .listen-btn {
+            background: rgba(139, 69, 19, 0.3);
+            border: 2px solid var(--gryffindor-gold);
+            color: var(--gryffindor-gold);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-family: 'Cinzel', serif;
+            margin: 10px auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .listen-btn:hover {
+            background: rgba(211, 166, 37, 0.3);
+            transform: scale(1.05);
+        }
+
+        .listen-btn:active {
+            transform: scale(0.98);
+        }
+
         /* Player Stats Bar */
         .stats-bar {
             position: fixed;
@@ -975,6 +1001,7 @@
     <!-- Character Creation Screen -->
     <div class="screen character-creation" id="characterCreation">
         <h2 class="game-title" style="font-size: 2em;">The Sorting Ceremony</h2>
+        <button class="listen-btn" onclick="speakScreenInstructions('characterCreation')">🔊 Listen</button>
         <p style="margin: 20px 0;">Enter your wizard name:</p>
         <input type="text" class="input-field" id="playerName" placeholder="Your name..." value="Yotam">
 
@@ -1008,6 +1035,7 @@
     <!-- Hub Screen -->
     <div class="screen hub-screen" id="hubScreen">
         <h2 class="game-title" style="font-size: 2em;">Hogwarts Castle</h2>
+        <button class="listen-btn" onclick="speakScreenInstructions('hubScreen')">🔊 Listen</button>
 
         <div class="avatar-display" id="avatarDisplay">
             <div class="avatar-icon" id="avatarIcon">🧙</div>
@@ -1062,6 +1090,7 @@
         <button class="back-btn" onclick="showScreen('hubScreen')">← Back</button>
         <div class="challenge-header">
             <h2 class="challenge-title">🦉 The Owlery</h2>
+            <button class="listen-btn" onclick="speakScreenInstructions('owleryScreen')">🔊 Listen</button>
             <p class="challenge-instruction">Choose your alphabet challenge:</p>
         </div>
 
@@ -1101,6 +1130,7 @@
         <button class="back-btn" onclick="showScreen('hubScreen')">← Back</button>
         <div class="challenge-header">
             <h2 class="challenge-title">🎤 Spell Practice Room</h2>
+            <button class="listen-btn" onclick="speakScreenInstructions('spellPracticeScreen')">🔊 Listen</button>
             <p class="challenge-instruction">Speak the words to cast spells!</p>
         </div>
 
@@ -1135,6 +1165,7 @@
         <button class="back-btn" onclick="showScreen('hubScreen')">← Back</button>
         <div class="challenge-header">
             <h2 class="challenge-title" id="mazeLevelTitle">The Philosopher's Chambers</h2>
+            <button class="listen-btn" onclick="speakScreenInstructions('mazeLevelScreen')">🔊 Listen</button>
             <p class="challenge-instruction" id="mazeLevelInstruction">Choose a challenge room:</p>
         </div>
 
@@ -1148,6 +1179,7 @@
         <button class="back-btn" onclick="showScreen('hubScreen')">← Back</button>
         <div class="challenge-header">
             <h2 class="challenge-title">🏪 Diagon Alley</h2>
+            <button class="listen-btn" onclick="speakScreenInstructions('diagonAlleyScreen')">🔊 Listen</button>
             <p class="challenge-instruction">Spend your Galleons on magical items!</p>
             <p style="font-size: 1.3em; color: #FFD700; margin-top: 10px;">🪙 <span id="shopGalleons">0</span> Galleons</p>
         </div>
@@ -1182,6 +1214,7 @@
         <button class="back-btn" onclick="showScreen('hubScreen')">← Back</button>
         <div class="challenge-header">
             <h2 class="challenge-title">🏆 Trophy Room</h2>
+            <button class="listen-btn" onclick="speakScreenInstructions('trophyRoomScreen')">🔊 Listen</button>
             <p class="challenge-instruction">Your magical achievements</p>
         </div>
 
@@ -1549,32 +1582,40 @@
                 updateProgressDisplay();
             }
 
-            // Read screen instructions aloud
-            setTimeout(() => {
-                switch(screenId) {
-                    case 'characterCreation':
-                        speak("Welcome to the Sorting Ceremony! Type your wizard name, then choose your Hogwarts house by clicking on it. When you're ready, click Enter Hogwarts!");
-                        break;
-                    case 'hubScreen':
-                        speak(`Welcome to Hogwarts Castle, ${gameState.playerName}! Choose where you want to go. You can practice letters in the Owlery, practice speaking spells, explore the maze, go shopping, or see your trophies.`);
-                        break;
-                    case 'owleryScreen':
-                        speak("Welcome to the Owlery! Choose an alphabet challenge. You can find letters, put them in order, match big and small letters, or do the full alphabet!");
-                        break;
-                    case 'spellPracticeScreen':
-                        speak("Welcome to the Spell Practice Room! Here you can practice speaking words out loud. Choose a category and speak into the microphone!");
-                        break;
-                    case 'mazeLevelScreen':
-                        speak("Choose a challenge room to enter. Complete each room to unlock the next one!");
-                        break;
-                    case 'diagonAlleyScreen':
-                        speak(`Welcome to Diagon Alley! You have ${gameState.galleons} galleons to spend. Click on items to buy them!`);
-                        break;
-                    case 'trophyRoomScreen':
-                        speak(`This is your Trophy Room! You have earned ${gameState.trophies.length} trophies. Keep playing to unlock more!`);
-                        break;
-                }
-            }, 500);
+            // No auto-speak - user can click Listen button on each screen
+        }
+
+        // Track which screens have been visited (for first-time instructions)
+        const visitedScreens = new Set();
+
+        // Get instruction text for each screen
+        function getScreenInstruction(screenId) {
+            switch(screenId) {
+                case 'characterCreation':
+                    return "Welcome to the Sorting Ceremony! Type your wizard name, then choose your Hogwarts house by clicking on it. When you're ready, click Enter Hogwarts!";
+                case 'hubScreen':
+                    return `Welcome to Hogwarts Castle, ${gameState.playerName}! Choose where you want to go. You can practice letters in the Owlery, practice speaking spells, explore the maze, go shopping, or see your trophies.`;
+                case 'owleryScreen':
+                    return "Welcome to the Owlery! Choose an alphabet challenge. You can find letters, put them in order, match big and small letters, or do the full alphabet!";
+                case 'spellPracticeScreen':
+                    return "Welcome to the Spell Practice Room! Here you can practice speaking words out loud. Choose a category and speak into the microphone!";
+                case 'mazeLevelScreen':
+                    return "Choose a challenge room to enter. Complete each room to unlock the next one!";
+                case 'diagonAlleyScreen':
+                    return `Welcome to Diagon Alley! You have ${gameState.galleons} galleons to spend. Click on items to buy them!`;
+                case 'trophyRoomScreen':
+                    return `This is your Trophy Room! You have earned ${gameState.trophies.length} trophies. Keep playing to unlock more!`;
+                default:
+                    return "";
+            }
+        }
+
+        // Speak screen instructions (called by listen buttons)
+        function speakScreenInstructions(screenId) {
+            const instruction = getScreenInstruction(screenId);
+            if (instruction) {
+                speak(instruction);
+            }
         }
 
         // =============================================
@@ -2827,37 +2868,48 @@
         function playMagicalAmbience() {
             if (!musicContext || !musicPlaying) return;
 
-            // Magical chord progression (dreamy, Harry Potter-like)
+            // Warm, magical chord progression - inspired by Hedwig's Theme
+            // Using lower octaves and gentler intervals for warmth
             const chords = [
-                [261.63, 329.63, 392.00], // C major
-                [293.66, 369.99, 440.00], // D minor
-                [246.94, 311.13, 369.99], // B minor
-                [261.63, 311.13, 392.00], // C with flat 3
+                [130.81, 196.00, 261.63], // C major (low, warm)
+                [146.83, 220.00, 293.66], // D minor (melancholic)
+                [130.81, 164.81, 196.00], // C sus (dreamy)
+                [123.47, 185.00, 246.94], // B minor (mysterious)
+                [130.81, 174.61, 220.00], // C with F (hopeful)
+                [116.54, 174.61, 233.08], // Bb major (warm resolution)
             ];
 
             const now = musicContext.currentTime;
+            const chordDuration = 5; // Slower chord changes
 
             chords.forEach((chord, chordIndex) => {
                 chord.forEach((freq, noteIndex) => {
                     const osc = musicContext.createOscillator();
                     const noteGain = musicContext.createGain();
 
-                    // Use soft waveforms
-                    osc.type = noteIndex === 0 ? 'sine' : 'triangle';
+                    // Create a low-pass filter for warmth
+                    const filter = musicContext.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.value = 800; // Cut harsh highs
+                    filter.Q.value = 0.5;
+
+                    // Use only sine waves for maximum warmth
+                    osc.type = 'sine';
                     osc.frequency.value = freq;
 
                     noteGain.gain.value = 0;
 
-                    osc.connect(noteGain);
+                    osc.connect(filter);
+                    filter.connect(noteGain);
                     noteGain.connect(musicGain);
 
-                    const startTime = now + (chordIndex * 4);
-                    const endTime = startTime + 4;
+                    const startTime = now + (chordIndex * chordDuration);
+                    const endTime = startTime + chordDuration + 1; // Slight overlap
 
-                    // Fade in and out
+                    // Very gentle fade in and out
                     noteGain.gain.setValueAtTime(0, startTime);
-                    noteGain.gain.linearRampToValueAtTime(0.08, startTime + 1);
-                    noteGain.gain.linearRampToValueAtTime(0.08, endTime - 1);
+                    noteGain.gain.linearRampToValueAtTime(0.06, startTime + 2);
+                    noteGain.gain.linearRampToValueAtTime(0.06, endTime - 2);
                     noteGain.gain.linearRampToValueAtTime(0, endTime);
 
                     osc.start(startTime);
@@ -2865,30 +2917,38 @@
                 });
             });
 
-            // Add magical sparkle sounds
-            for (let i = 0; i < 8; i++) {
-                const sparkle = musicContext.createOscillator();
-                const sparkleGain = musicContext.createGain();
+            // Add gentle, occasional bell-like tones (like a music box)
+            for (let i = 0; i < 4; i++) {
+                const bell = musicContext.createOscillator();
+                const bellGain = musicContext.createGain();
+                const bellFilter = musicContext.createBiquadFilter();
 
-                sparkle.type = 'sine';
-                sparkle.frequency.value = 800 + Math.random() * 1200;
+                bellFilter.type = 'lowpass';
+                bellFilter.frequency.value = 1200;
 
-                sparkleGain.gain.value = 0;
-                sparkle.connect(sparkleGain);
-                sparkleGain.connect(musicGain);
+                bell.type = 'sine';
+                // Pentatonic notes for magical feel: C, D, E, G, A
+                const pentatonic = [523.25, 587.33, 659.25, 783.99, 880.00];
+                bell.frequency.value = pentatonic[Math.floor(Math.random() * pentatonic.length)];
 
-                const sparkleTime = now + Math.random() * 16;
-                sparkleGain.gain.setValueAtTime(0, sparkleTime);
-                sparkleGain.gain.linearRampToValueAtTime(0.05, sparkleTime + 0.1);
-                sparkleGain.gain.linearRampToValueAtTime(0, sparkleTime + 0.5);
+                bellGain.gain.value = 0;
+                bell.connect(bellFilter);
+                bellFilter.connect(bellGain);
+                bellGain.connect(musicGain);
 
-                sparkle.start(sparkleTime);
-                sparkle.stop(sparkleTime + 0.5);
+                const bellTime = now + 5 + Math.random() * 25;
+                bellGain.gain.setValueAtTime(0, bellTime);
+                bellGain.gain.linearRampToValueAtTime(0.03, bellTime + 0.3);
+                bellGain.gain.exponentialRampToValueAtTime(0.001, bellTime + 3);
+
+                bell.start(bellTime);
+                bell.stop(bellTime + 3);
             }
 
             // Loop the music
+            const totalDuration = chords.length * chordDuration * 1000;
             if (musicPlaying) {
-                setTimeout(playMagicalAmbience, 16000);
+                setTimeout(playMagicalAmbience, totalDuration - 2000); // Overlap for seamless loop
             }
         }
 
