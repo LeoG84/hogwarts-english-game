@@ -2275,7 +2275,10 @@
 
             document.getElementById('challengeInstruction').textContent = 'Put the letters in ABC order:';
             renderAlphabetOrder();
-            readInstruction("Put the letters in A B C order. Click them one by one, starting with the first letter!");
+            // Only speak instructions on first question
+            if (currentChallenge.questionIndex === 0) {
+                readInstruction("Put the letters in A B C order. Click them one by one, starting with the first letter!");
+            }
         }
 
         function renderAlphabetOrder() {
@@ -2348,7 +2351,10 @@
                     `).join('')}
                 </div>
             `;
-            readInstruction(`This is the big letter ${upperLetter}. Find the matching small letter and click it!`);
+            // Only speak instructions on first question
+            if (currentChallenge.questionIndex === 0) {
+                readInstruction("Find the matching small letter for each big letter!");
+            }
         }
 
         function generateMissingLetter() {
@@ -2381,7 +2387,10 @@
                     `).join('')}
                 </div>
             `;
-            readInstruction("One letter is missing! Look at the letters and find which one is missing. Then click on it!");
+            // Only speak instructions on first question
+            if (currentChallenge.questionIndex === 0) {
+                readInstruction("One letter is missing! Find which one is missing and click on it!");
+            }
         }
 
         function generateFullAlphabet() {
@@ -2637,7 +2646,10 @@
                     `).join('')}
                 </div>
             `;
-            readInstruction("Look at the picture! What is it? Click on the right word.");
+            // Only speak instructions on first question
+            if (currentChallenge.questionIndex === 0) {
+                readInstruction("Look at the picture! Click on the right word.");
+            }
         }
 
         function checkWord(btn, clicked, target) {
