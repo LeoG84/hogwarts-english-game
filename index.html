@@ -1097,6 +1097,32 @@
                 font-size: 0.75em;
             }
 
+            .level-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .level-card {
+                padding: 12px;
+            }
+
+            .level-icon {
+                font-size: 28px;
+                margin: 5px 0;
+            }
+
+            .level-name {
+                font-size: 0.85em;
+            }
+
+            .level-number {
+                font-size: 0.75em;
+            }
+
+            .level-stars {
+                font-size: 0.9em;
+            }
+
             .letter-btn {
                 width: 42px;
                 height: 42px;
@@ -1278,6 +1304,10 @@
             }
 
             .trophy-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .level-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -1902,6 +1932,9 @@
         // SCREEN NAVIGATION
         // =============================================
 
+        // Track which screens have been visited (for first-time instructions)
+        const visitedScreens = new Set();
+
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
@@ -1915,11 +1948,15 @@
                 updateProgressDisplay();
             }
 
-            // No auto-speak - user can click Listen button on each screen
+            // Auto-speak instructions on FIRST visit only
+            if (!visitedScreens.has(screenId)) {
+                visitedScreens.add(screenId);
+                const instruction = getScreenInstruction(screenId);
+                if (instruction) {
+                    setTimeout(() => speak(instruction), 500);
+                }
+            }
         }
-
-        // Track which screens have been visited (for first-time instructions)
-        const visitedScreens = new Set();
 
         // Get instruction text for each screen
         function getScreenInstruction(screenId) {
